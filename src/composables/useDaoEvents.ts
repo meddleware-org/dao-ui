@@ -53,8 +53,14 @@ export function useDaoEvents(limit = 20) {
         }
       }
 
-      // Events come back in descending order per-type; stable sort across types by txDigest.
-      // timestampMs is not available from gRPC EventEntry; order is already newest-first per batch.
+      // Sort globally by checkpoint descending so the merged list is newest-first across all types.
+      all.sort((a, b) => {
+        const ca = BigInt(a.checkpoint ?? '0')
+        const cb = BigInt(b.checkpoint ?? '0')
+        if (cb > ca) return 1
+        if (cb < ca) return -1
+        return 0
+      })
       events.value = all.slice(0, limit)
       lastRefresh.value = new Date()
     } catch (e) {

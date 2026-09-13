@@ -322,6 +322,36 @@
   font-size: 0.72rem;
 }
 
+/* ── Info tooltip marker ─────────────────────────────────────────────────── */
+
+.dao-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1px solid var(--muted);
+  color: var(--muted);
+  font-size: 0.58rem;
+  font-weight: 700;
+  font-style: normal;
+  cursor: help;
+  vertical-align: middle;
+  margin-left: 3px;
+  text-decoration: none;
+}
+
+/* ── Pagination ──────────────────────────────────────────────────────────── */
+
+.dao-pagination {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
 /* ── Misc ────────────────────────────────────────────────────────────────── */
 
 .dao-mono {

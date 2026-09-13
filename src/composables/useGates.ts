@@ -9,7 +9,7 @@ export interface Gate {
   paused: boolean
   frozen: boolean
   txDigest: string
-  timestampMs: number
+  checkpoint: string | null
 }
 
 export function useGates() {
@@ -37,7 +37,7 @@ export function useGates() {
           paused: false,
           frozen: false,
           txDigest: e.transactionDigest,
-          timestampMs: 0,
+          checkpoint: e.checkpoint ?? null,
         }
       })
     } catch (e) {

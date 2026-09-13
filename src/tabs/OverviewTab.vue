@@ -6,12 +6,14 @@ import { usePlatformConfig } from '../composables/usePlatformConfig.js'
 import { useTreasury } from '../composables/useTreasury.js'
 import { useDaoEvents } from '../composables/useDaoEvents.js'
 import { useGates } from '../composables/useGates.js'
+import { CopyableAddress, ExplorerLink, suiExplorerUrl } from '@meddleware/ui'
+import { NETWORK } from '../config.js'
 import type { DaoEvent } from '../composables/useDaoEvents.js'
 
 const { config } = usePlatformConfig()
 const { balance } = useTreasury(() => config.value?.treasury ?? null)
 const { events, loading: eventsLoading } = useDaoEvents(12)
-const { gates } = useGates()
+const { gates, loading: gatesLoading } = useGates()
 
 const eventLabel: Record<DaoEvent['type'], string> = {
   AccessMinted: 'Access sold',
@@ -41,12 +43,11 @@ const accessesConsumed = computed(() => events.value.filter((e) => e.type === 'A
           <span class="dao-stat-grid__value dao-mono">{{ commissionPct }}</span>
 
           <span class="dao-stat-grid__label">Treasury address</span>
-          <span
-            class="dao-stat-grid__value dao-mono"
-            style="font-size: 0.7rem; word-break: break-all; text-align: left"
-            :title="config?.treasury"
-          >
-            {{ config?.treasury ? config.treasury.slice(0, 10) + '…' + config.treasury.slice(-6) : '—' }}
+          <span class="dao-stat-grid__value" style="text-align: left">
+            <CopyableAddress v-if="config?.treasury" :address="config.treasury">
+              <ExplorerLink :href="suiExplorerUrl('account', config.treasury, NETWORK)" :value="config.treasury" />
+            </CopyableAddress>
+            <span v-else class="dao-mono" style="font-size: 0.7rem">—</span>
           </span>
         </div>
       </Panel>
@@ -54,7 +55,7 @@ const accessesConsumed = computed(() => events.value.filter((e) => e.type === 'A
       <Panel title="Platform Activity">
         <div class="dao-stat-grid">
           <span class="dao-stat-grid__label">Active gates</span>
-          <span class="dao-stat-grid__value dao-mono">{{ gates.length || '—' }}</span>
+          <span class="dao-stat-grid__value dao-mono">{{ gatesLoading ? '…' : gates.length }}</span>
 
           <span class="dao-stat-grid__label">Accesses minted</span>
           <span class="dao-stat-grid__value dao-mono">{{ accessesMinted || '—' }}</span>

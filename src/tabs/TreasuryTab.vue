@@ -6,6 +6,8 @@ import DataTable from '../components/DataTable.vue'
 import { usePlatformConfig } from '../composables/usePlatformConfig.js'
 import { useTreasury } from '../composables/useTreasury.js'
 import { useGates } from '../composables/useGates.js'
+import { CopyableAddress, ExplorerLink, suiExplorerUrl } from '@meddleware/ui'
+import { NETWORK } from '../config.js'
 
 const { config, loading: cfgLoading, error: cfgErr } = usePlatformConfig()
 const { balance } = useTreasury(() => config.value?.treasury ?? null)
@@ -19,15 +21,11 @@ function formatPrice(mist: bigint): string {
   const n = Number(mist) / 1e9
   return n >= 0.0001 ? n.toFixed(4) + ' SUI' : n.toFixed(9).replace(/0+$/, '') + ' SUI'
 }
-
-function shortDate(ms: number): string {
-  return ms ? new Date(ms).toISOString().slice(0, 10) : '—'
-}
 </script>
 
 <template>
   <div style="display: flex; flex-direction: column; gap: 10px">
-    <Panel title="Commission Configuration">
+    <Panel title="Treasury">
       <p v-if="cfgLoading" class="dao-muted">Loading…</p>
       <p v-else-if="cfgErr" class="dao-muted">{{ cfgErr }}</p>
       <template v-else-if="config">
@@ -35,23 +33,18 @@ function shortDate(ms: number): string {
           <span class="dao-stat-grid__label">Commission rate</span>
           <span class="dao-stat-grid__value dao-mono">{{ commissionPct }} ({{ config.commissionBps }} bps)</span>
 
-          <span class="dao-stat-grid__label">Treasury address</span>
-          <span class="dao-stat-grid__value dao-mono" style="font-size: 0.72rem; text-align: left; word-break: break-all">
-            {{ config.treasury }}
-          </span>
-
           <span class="dao-stat-grid__label">Current balance</span>
           <AmountCell class="dao-stat-grid__value" :mist="balance" />
+
+          <span class="dao-stat-grid__label">Treasury address</span>
+          <span class="dao-stat-grid__value" style="text-align: left">
+            <CopyableAddress :address="config.treasury">
+              <ExplorerLink :href="suiExplorerUrl('account', config.treasury, NETWORK)" :value="config.treasury" />
+            </CopyableAddress>
+          </span>
         </div>
       </template>
       <p v-else class="dao-muted">PlatformConfig not loaded.</p>
-    </Panel>
-
-    <Panel title="Fee Distribution">
-      <p class="dao-muted" style="margin: 0; font-size: 0.78rem">
-        Fee distributor data (buyback/burn ratios, distribution history) will appear here when
-        <code>vault_fee_distributor</code> is deployed.
-      </p>
     </Panel>
 
     <Panel title="Community Gates">
@@ -60,15 +53,22 @@ function shortDate(ms: number): string {
         <template #head>
           <th>Gate name</th>
           <th>Price</th>
-          <th>Created</th>
+          <th>
+            Block
+            <abbr class="dao-info" title="Sui checkpoint sequence number at which this gate was created. Equivalent to a block height in other blockchains.">?</abbr>
+          </th>
           <th>Object ID</th>
         </template>
         <tr v-for="gate in gates" :key="gate.id">
           <td>{{ gate.name }}</td>
           <td class="dao-amount">{{ formatPrice(gate.price) }}</td>
-          <td class="dao-mono" style="font-size: 0.72rem">{{ shortDate(gate.timestampMs) }}</td>
-          <td class="dao-mono" style="font-size: 0.7rem">
-            {{ gate.id.slice(0, 10) }}…{{ gate.id.slice(-6) }}
+          <td class="dao-mono" style="font-size: 0.72rem">
+            {{ gate.checkpoint ? '#' + gate.checkpoint : '—' }}
+          </td>
+          <td class="dao-mono" style="font-size: 0.7rem; white-space: nowrap">
+            <CopyableAddress :address="gate.id" label="Copy object ID">
+              <ExplorerLink :href="suiExplorerUrl('object', gate.id, NETWORK)" :value="gate.id" />
+            </CopyableAddress>
           </td>
         </tr>
       </DataTable>
