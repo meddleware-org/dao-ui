@@ -1,0 +1,70 @@
+import { ref, onMounted } from 'vue'
+import { getSuiClient } from '../wallet.js'
+import { PACKAGE_ID } from '../config.js'
+
+export interface DaoEvent {
+  type: 'AccessMinted' | 'AccessConsumed' | 'GateCreated' | 'AccessBurned'
+  txDigest: string
+  timestampMs: number
+  address?: string
+}
+
+export function useDaoEvents(limit = 20) {
+  const events = ref<DaoEvent[]>([])
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+  const lastRefresh = ref<Date | null>(null)
+
+  async function load() {
+    if (!PACKAGE_ID) return
+    loading.value = true
+    error.value = null
+    try {
+      const client = getSuiClient()
+      const eventTypes = [
+        `${PACKAGE_ID}::access_gate::AccessMintedEvent`,
+        `${PACKAGE_ID}::access_gate::AccessConsumedEvent`,
+        `${PACKAGE_ID}::access_gate::GateCreatedEvent`,
+      ]
+
+      const results = await Promise.allSettled(
+        eventTypes.map((t) =>
+          client.listEvents({ filter: { eventType: t }, limit, order: 'descending' }),
+        ),
+      )
+
+      const all: DaoEvent[] = []
+      for (const r of results) {
+        if (r.status !== 'fulfilled') continue
+        for (const e of r.value.events) {
+          const typeName = e.eventType.split('::').pop() ?? ''
+          const label =
+            typeName === 'AccessMintedEvent' ? 'AccessMinted'
+            : typeName === 'AccessConsumedEvent' ? 'AccessConsumed'
+            : typeName === 'GateCreatedEvent' ? 'GateCreated'
+            : 'AccessBurned'
+          const f = (e.json ?? {}) as Record<string, unknown>
+          all.push({
+            type: label as DaoEvent['type'],
+            txDigest: e.transactionDigest,
+            timestampMs: 0,
+            address: String(f.recipient ?? f.creator ?? f.sender ?? ''),
+          })
+        }
+      }
+
+      // Events come back in descending order per-type; stable sort across types by txDigest.
+      // timestampMs is not available from gRPC EventEntry; order is already newest-first per batch.
+      events.value = all.slice(0, limit)
+      lastRefresh.value = new Date()
+    } catch (e) {
+      error.value = e instanceof Error ? e.message : String(e)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  onMounted(load)
+
+  return { events, loading, error, lastRefresh, reload: load }
+}

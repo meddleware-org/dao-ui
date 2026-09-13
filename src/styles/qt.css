@@ -1,0 +1,356 @@
+/*
+ * Desktop-application (Bitcoin-Qt / Monero-Qt) aesthetic layer.
+ * Layered on top of @meddleware/design-tokens — uses CSS vars from the token set.
+ * Applied globally via main.ts; does not affect host documents when DaoView is embedded
+ * because the overrides are scoped to .dao-view and its descendants.
+ */
+
+/* ── Layout shell ────────────────────────────────────────────────────────── */
+
+.dao-view {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+/* ── Toolbar ─────────────────────────────────────────────────────────────── */
+
+.dao-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+.dao-toolbar__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  height: 26px;
+  font-size: 0.8rem;
+  background: var(--lift);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.1s;
+}
+
+.dao-toolbar__btn:hover {
+  background: var(--surface);
+  border-color: var(--accent);
+}
+
+.dao-toolbar__sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  margin: 0 4px;
+}
+
+/* ── Tab bar ─────────────────────────────────────────────────────────────── */
+
+.dao-tabs {
+  display: flex;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.dao-tabs::-webkit-scrollbar { display: none; }
+
+.dao-tab {
+  padding: 7px 16px 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.1s, border-color 0.1s;
+  letter-spacing: 0.01em;
+}
+
+.dao-tab:hover {
+  color: var(--text);
+}
+
+.dao-tab--active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+/* ── Tab content area ────────────────────────────────────────────────────── */
+
+.dao-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  background: var(--bg);
+}
+
+/* ── Status bar ──────────────────────────────────────────────────────────── */
+
+.dao-statusbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 3px 12px;
+  font-size: 0.72rem;
+  color: var(--muted);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+}
+
+.dao-statusbar__dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 4px;
+  flex-shrink: 0;
+}
+
+.dao-statusbar__dot--ok    { background: var(--ok); }
+.dao-statusbar__dot--warn  { background: #b08d2a; }
+.dao-statusbar__dot--error { background: var(--danger); }
+
+.dao-statusbar__item {
+  display: flex;
+  align-items: center;
+}
+
+.dao-statusbar__sep {
+  color: var(--border);
+}
+
+/* ── Panel ───────────────────────────────────────────────────────────────── */
+
+.dao-panel {
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.dao-panel__head {
+  padding: 5px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--lift);
+  border-bottom: 1px solid var(--border);
+}
+
+.dao-panel__body {
+  padding: 10px;
+}
+
+/* ── Data table ──────────────────────────────────────────────────────────── */
+
+.dao-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.dao-table th {
+  text-align: left;
+  padding: 5px 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.dao-table td {
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.dao-table tr:last-child td {
+  border-bottom: none;
+}
+
+.dao-table tr:nth-child(even) td {
+  background: var(--lift);
+}
+
+/* ── Amount cells (monospace, right-aligned) ─────────────────────────────── */
+
+.dao-amount {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.dao-amount--muted {
+  color: var(--muted);
+}
+
+/* ── Stat grid (Overview key/value pairs) ────────────────────────────────── */
+
+.dao-stat-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3px 12px;
+  font-size: 0.8rem;
+}
+
+.dao-stat-grid__label {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.dao-stat-grid__value {
+  font-family: var(--font-mono);
+  color: var(--text);
+  text-align: right;
+}
+
+/* ── Two-column overview layout ──────────────────────────────────────────── */
+
+.dao-overview-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+@media (max-width: 640px) {
+  .dao-overview-cols { grid-template-columns: 1fr; }
+}
+
+/* ── Proposal progress bar ───────────────────────────────────────────────── */
+
+.dao-progress {
+  height: 6px;
+  background: var(--lift);
+  border: 1px solid var(--border);
+  border-radius: 1px;
+  overflow: hidden;
+  margin: 3px 0;
+}
+
+.dao-progress__fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+/* ── Activity feed ───────────────────────────────────────────────────────── */
+
+.dao-feed {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.78rem;
+}
+
+.dao-feed__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.dao-feed__item:last-child {
+  border-bottom: none;
+}
+
+.dao-feed__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.dao-feed__type {
+  color: var(--text);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.dao-feed__time {
+  margin-left: auto;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+/* ── Misc ────────────────────────────────────────────────────────────────── */
+
+.dao-mono {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+.dao-muted {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.dao-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.dao-badge--active { background: color-mix(in srgb, var(--ok) 20%, transparent); color: var(--ok); }
+.dao-badge--closed { background: color-mix(in srgb, var(--muted) 20%, transparent); color: var(--muted); }
+.dao-badge--pending { background: color-mix(in srgb, #b08d2a 20%, transparent); color: #b08d2a; }
+
+.dao-section-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+
+.dao-notice {
+  padding: 8px 10px;
+  border: 1px solid #b08d2a;
+  border-radius: 2px;
+  background: color-mix(in srgb, #b08d2a 10%, transparent);
+  color: #b08d2a;
+  font-size: 0.78rem;
+  margin-bottom: 10px;
+}
+
+.dao-placeholder {
+  text-align: center;
+  padding: 24px 16px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
