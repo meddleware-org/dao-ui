@@ -9,11 +9,6 @@ const { epoch } = useEpoch()
 
 <template>
   <div>
-    <div class="dao-notice">
-      On-chain governance proposals will appear here once <code>vault_dao</code> is deployed.
-      Contributions and voting will be enabled at that point.
-    </div>
-
     <template v-if="proposals.length > 0">
       <p class="dao-section-title">Active &amp; Pending Proposals</p>
       <ProposalRow
