@@ -10,16 +10,21 @@ const { epoch } = useEpoch()
 <template>
   <div>
     <div class="dao-notice">
-      Governance proposals are currently scaffolded with illustrative data.
-      On-chain voting and contributions will be enabled when <code>vault_dao</code> is deployed.
+      On-chain governance proposals will appear here once <code>vault_dao</code> is deployed.
+      Contributions and voting will be enabled at that point.
     </div>
 
-    <p class="dao-section-title">Active &amp; Pending Proposals</p>
-    <ProposalRow
-      v-for="p in proposals"
-      :key="p.id"
-      :proposal="p"
-      :current-epoch="epoch"
-    />
+    <template v-if="proposals.length > 0">
+      <p class="dao-section-title">Active &amp; Pending Proposals</p>
+      <ProposalRow
+        v-for="p in proposals"
+        :key="p.id"
+        :proposal="p"
+        :current-epoch="epoch"
+      />
+    </template>
+    <div v-else class="dao-placeholder">
+      No proposals yet.
+    </div>
   </div>
 </template>

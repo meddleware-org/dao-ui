@@ -61,36 +61,52 @@
 .dao-tabs {
   display: flex;
   align-items: flex-end;
+  /* 1px bottom border that active tabs "punch through" via margin-bottom: -1px */
   border-bottom: 1px solid var(--border);
   background: var(--surface);
   flex-shrink: 0;
   overflow-x: auto;
   scrollbar-width: none;
+  padding: 4px 4px 0;
+  gap: 2px;
 }
 
 .dao-tabs::-webkit-scrollbar { display: none; }
 
 .dao-tab {
-  padding: 7px 16px 6px;
+  /* Reset browser UA button defaults */
+  appearance: none;
+  border-radius: 0;
+  /* Classic raised-tab shape: visible top + sides, no bottom border on active */
+  padding: 5px 14px 6px;
   font-size: 0.8rem;
   font-weight: 500;
   color: var(--muted);
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
+  background: var(--lift);
+  border-top: 2px solid transparent;
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: -1px;       /* sit flush on the tab bar bottom border */
   cursor: pointer;
   white-space: nowrap;
-  transition: color 0.1s, border-color 0.1s;
+  transition: color 0.1s, background 0.1s, border-color 0.1s;
   letter-spacing: 0.01em;
 }
 
-.dao-tab:hover {
+.dao-tab:hover:not(.dao-tab--active) {
   color: var(--text);
+  background: var(--surface);
 }
 
 .dao-tab--active {
   color: var(--text);
-  border-bottom-color: var(--accent);
+  background: var(--bg);     /* same as .dao-content — visually "opens" into content */
+  border-top-color: var(--accent);
+  border-left-color: var(--border);
+  border-right-color: var(--border);
+  border-bottom-color: var(--bg);  /* erase the bottom border, merging with content */
+  font-weight: 600;
 }
 
 /* ── Tab content area ────────────────────────────────────────────────────── */
