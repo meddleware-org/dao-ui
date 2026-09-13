@@ -5,19 +5,13 @@ import AmountCell from '../components/AmountCell.vue'
 import { usePlatformConfig } from '../composables/usePlatformConfig.js'
 import { useTreasury } from '../composables/useTreasury.js'
 import { useDaoEvents } from '../composables/useDaoEvents.js'
+import { useGates } from '../composables/useGates.js'
 import type { DaoEvent } from '../composables/useDaoEvents.js'
 
 const { config } = usePlatformConfig()
 const { balance } = useTreasury(() => config.value?.treasury ?? null)
 const { events, loading: eventsLoading } = useDaoEvents(12)
-
-function timeAgo(ms: number): string {
-  const s = Math.floor((Date.now() - ms) / 1000)
-  if (s < 5) return 'just now'
-  if (s < 60) return `${s}s ago`
-  if (s < 3600) return `${Math.floor(s / 60)}m ago`
-  return `${Math.floor(s / 3600)}h ago`
-}
+const { gates } = useGates()
 
 const eventLabel: Record<DaoEvent['type'], string> = {
   AccessMinted: 'Access sold',
@@ -29,6 +23,9 @@ const eventLabel: Record<DaoEvent['type'], string> = {
 const commissionPct = computed(() =>
   config.value ? (config.value.commissionBps / 100).toFixed(2) + '%' : '—',
 )
+
+const accessesMinted = computed(() => events.value.filter((e) => e.type === 'AccessMinted').length)
+const accessesConsumed = computed(() => events.value.filter((e) => e.type === 'AccessConsumed').length)
 </script>
 
 <template>
@@ -54,21 +51,17 @@ const commissionPct = computed(() =>
         </div>
       </Panel>
 
-      <Panel title="Platform Stats">
+      <Panel title="Platform Activity">
         <div class="dao-stat-grid">
-          <span class="dao-stat-grid__label">Strategy NAV</span>
-          <span class="dao-stat-grid__value dao-muted">—</span>
+          <span class="dao-stat-grid__label">Active gates</span>
+          <span class="dao-stat-grid__value dao-mono">{{ gates.length || '—' }}</span>
 
-          <span class="dao-stat-grid__label">Buyback/burn</span>
-          <span class="dao-stat-grid__value dao-muted">—</span>
+          <span class="dao-stat-grid__label">Accesses minted</span>
+          <span class="dao-stat-grid__value dao-mono">{{ accessesMinted || '—' }}</span>
 
-          <span class="dao-stat-grid__label">Fee distributor</span>
-          <span class="dao-stat-grid__value dao-muted">—</span>
+          <span class="dao-stat-grid__label">Accesses consumed</span>
+          <span class="dao-stat-grid__value dao-mono">{{ accessesConsumed || '—' }}</span>
         </div>
-        <p class="dao-muted" style="margin: 8px 0 0; font-size: 0.72rem">
-          Strategy NAV, buyback and fee distribution data will appear here when
-          <code>vault_core</code> and <code>vault_fee_distributor</code> are deployed.
-        </p>
       </Panel>
     </div>
 
@@ -76,10 +69,10 @@ const commissionPct = computed(() =>
     <Panel title="Recent Activity">
       <p v-if="eventsLoading" class="dao-muted" style="margin: 0">Loading events…</p>
       <ul v-else-if="events.length" class="dao-feed">
-        <li v-for="ev in events" :key="ev.txDigest + ev.timestampMs" class="dao-feed__item">
+        <li v-for="ev in events" :key="ev.txDigest" class="dao-feed__item">
           <span class="dao-feed__dot" />
           <span class="dao-feed__type">{{ eventLabel[ev.type] }}</span>
-          <span class="dao-feed__time">{{ timeAgo(ev.timestampMs) }}</span>
+          <span class="dao-feed__time">ckpt {{ ev.checkpoint ?? '?' }}</span>
         </li>
       </ul>
       <p v-else class="dao-placeholder">No recent events.</p>

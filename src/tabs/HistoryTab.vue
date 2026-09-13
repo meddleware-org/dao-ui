@@ -12,9 +12,8 @@ const eventLabel: Record<DaoEvent['type'], string> = {
   AccessBurned: 'Access Burned',
 }
 
-function shortTs(ms: number): string {
-  if (!ms) return '—'
-  return new Date(ms).toISOString().replace('T', ' ').slice(0, 19) + ' UTC'
+function shortCkpt(ckpt: string | null): string {
+  return ckpt ? `ckpt ${ckpt}` : '—'
 }
 
 function shortAddr(addr: string | undefined): string {
@@ -42,10 +41,10 @@ function explorerUrl(digest: string): string {
       <template #head>
         <th>Type</th>
         <th>Address</th>
-        <th>Time (UTC)</th>
+        <th>Checkpoint</th>
         <th>Tx</th>
       </template>
-      <tr v-for="ev in events" :key="ev.txDigest + ev.timestampMs">
+      <tr v-for="ev in events" :key="ev.txDigest">
         <td>
           <span
             class="dao-badge"
@@ -57,7 +56,7 @@ function explorerUrl(digest: string): string {
           >{{ eventLabel[ev.type] }}</span>
         </td>
         <td class="dao-mono" style="font-size: 0.72rem">{{ shortAddr(ev.address) }}</td>
-        <td class="dao-mono" style="font-size: 0.72rem">{{ shortTs(ev.timestampMs) }}</td>
+        <td class="dao-mono" style="font-size: 0.72rem">{{ shortCkpt(ev.checkpoint) }}</td>
         <td class="dao-mono" style="font-size: 0.72rem">
           <a :href="explorerUrl(ev.txDigest)" target="_blank" rel="noopener" style="color: var(--accent)">
             {{ ev.txDigest.slice(0, 8) }}…

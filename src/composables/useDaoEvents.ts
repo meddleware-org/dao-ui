@@ -5,7 +5,7 @@ import { PACKAGE_ID } from '../config.js'
 export interface DaoEvent {
   type: 'AccessMinted' | 'AccessConsumed' | 'GateCreated' | 'AccessBurned'
   txDigest: string
-  timestampMs: number
+  checkpoint: string | null
   address?: string
 }
 
@@ -47,7 +47,7 @@ export function useDaoEvents(limit = 20) {
           all.push({
             type: label as DaoEvent['type'],
             txDigest: e.transactionDigest,
-            timestampMs: 0,
+            checkpoint: e.checkpoint ?? null,
             address: String(f.recipient ?? f.creator ?? f.sender ?? ''),
           })
         }

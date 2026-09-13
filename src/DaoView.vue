@@ -6,7 +6,7 @@
 // qt.css is imported here (not just in main.ts) so the styles are included when
 // DaoView is consumed as a library by the dashboard or any other host.
 import './styles/qt.css'
-import { ref, shallowRef, computed } from 'vue'
+import { ref, computed } from 'vue'
 import TabBar from './components/TabBar.vue'
 import StatusBar from './components/StatusBar.vue'
 import OverviewTab from './tabs/OverviewTab.vue'
@@ -47,10 +47,6 @@ const { epoch } = useEpoch()
   <div class="dao-view">
     <div class="dao-toolbar">
       <button class="dao-toolbar__btn" @click="activeTab = 'overview'">🏛 Meddleware DAO</button>
-      <span class="dao-toolbar__sep" />
-      <span class="dao-muted" style="font-size: 0.75rem; padding: 0 4px">
-        access_gate · testnet
-      </span>
     </div>
 
     <TabBar :tabs="TABS" v-model="activeTab" />

@@ -131,6 +131,9 @@
   border-top: 1px solid var(--border);
   flex-shrink: 0;
   font-family: var(--font-mono);
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
 }
 
 .dao-statusbar__dot {
