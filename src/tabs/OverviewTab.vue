@@ -18,7 +18,6 @@ const { gates, loading: gatesLoading } = useGates()
 const eventLabel: Record<DaoEvent['type'], string> = {
   AccessMinted: 'Access sold',
   AccessConsumed: 'Access used',
-  GateCreated: 'Gate created',
   AccessBurned: 'Access burned',
 }
 

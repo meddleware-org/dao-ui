@@ -3,7 +3,7 @@ import { getSuiClient } from '../wallet.js'
 import { PACKAGE_ID } from '../config.js'
 
 export interface DaoEvent {
-  type: 'AccessMinted' | 'AccessConsumed' | 'GateCreated' | 'AccessBurned'
+  type: 'AccessMinted' | 'AccessConsumed' | 'AccessBurned'
   txDigest: string
   checkpoint: string | null
   address?: string
@@ -24,7 +24,6 @@ export function useDaoEvents(limit = 20) {
       const eventTypes = [
         `${PACKAGE_ID}::access_gate::AccessMintedEvent`,
         `${PACKAGE_ID}::access_gate::AccessConsumedEvent`,
-        `${PACKAGE_ID}::access_gate::GateCreatedEvent`,
       ]
 
       const results = await Promise.allSettled(
@@ -41,7 +40,6 @@ export function useDaoEvents(limit = 20) {
           const label =
             typeName === 'AccessMintedEvent' ? 'AccessMinted'
             : typeName === 'AccessConsumedEvent' ? 'AccessConsumed'
-            : typeName === 'GateCreatedEvent' ? 'GateCreated'
             : 'AccessBurned'
           const f = (e.json ?? {}) as Record<string, unknown>
           all.push({

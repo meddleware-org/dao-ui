@@ -8,7 +8,6 @@ export interface Gate {
   price: bigint
   paused: boolean
   frozen: boolean
-  checkpoint: string | null
 }
 
 export function useGates() {
@@ -57,7 +56,6 @@ export function useGates() {
               price: BigInt(String(f.price_mist ?? '0')),
               paused: Boolean(f.paused),
               frozen: Boolean(f.frozen),
-              checkpoint: null,
             }
           } catch {
             return null

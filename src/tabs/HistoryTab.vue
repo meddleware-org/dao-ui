@@ -22,7 +22,6 @@ function nextPage() { if (page.value < totalPages.value) page.value++ }
 const eventLabel: Record<DaoEvent['type'], string> = {
   AccessMinted: 'Access Sold',
   AccessConsumed: 'Access Used',
-  GateCreated: 'Gate Created',
   AccessBurned: 'Access Burned',
 }
 
@@ -61,7 +60,6 @@ const eventLabel: Record<DaoEvent['type'], string> = {
             class="dao-badge"
             :class="{
               'dao-badge--active': ev.type === 'AccessMinted',
-              'dao-badge--pending': ev.type === 'GateCreated',
               'dao-badge--closed': ev.type === 'AccessConsumed' || ev.type === 'AccessBurned',
             }"
           >{{ eventLabel[ev.type] }}</span>

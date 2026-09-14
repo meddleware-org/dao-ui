@@ -53,18 +53,11 @@ function formatPrice(mist: bigint): string {
         <template #head>
           <th>Gate name</th>
           <th>Price</th>
-          <th>
-            Block
-            <abbr class="dao-info" title="Sui checkpoint sequence number at which this gate was created. Equivalent to a block height in other blockchains.">?</abbr>
-          </th>
           <th>Object ID</th>
         </template>
         <tr v-for="gate in gates" :key="gate.id">
           <td>{{ gate.name }}</td>
           <td class="dao-amount">{{ formatPrice(gate.price) }}</td>
-          <td class="dao-mono" style="font-size: 0.72rem">
-            {{ gate.checkpoint ? '#' + gate.checkpoint : '—' }}
-          </td>
           <td class="dao-mono" style="font-size: 0.7rem; white-space: nowrap">
             <CopyableAddress :address="gate.id" label="Copy object ID">
               <ExplorerLink :href="suiExplorerUrl('object', gate.id, NETWORK)" :value="gate.id" />
