@@ -1,6 +1,6 @@
 import { ref, onMounted } from 'vue'
 import { getSuiClient } from '../wallet.js'
-import { PACKAGE_ID } from '../config.js'
+import { PACKAGE_ID, CONFIG_ID } from '../config.js'
 
 export interface Gate {
   id: string
@@ -8,7 +8,6 @@ export interface Gate {
   price: bigint
   paused: boolean
   frozen: boolean
-  txDigest: string
   checkpoint: string | null
 }
 
@@ -18,28 +17,54 @@ export function useGates() {
   const error = ref<string | null>(null)
 
   async function load() {
-    if (!PACKAGE_ID) return
+    if (!PACKAGE_ID || !CONFIG_ID) return
     loading.value = true
     error.value = null
     try {
       const client = getSuiClient()
-      const events = await client.listEvents({
-        filter: { eventType: `${PACKAGE_ID}::access_gate::GateCreatedEvent` },
-        limit: 50,
-        order: 'descending',
+
+      // Get treasury address from PlatformConfig so we know whose AdminCaps to look for.
+      // This is resilient to event pruning (the GateCreatedEvent is pruned on testnet
+      // after ~3 months, making event-based discovery unreliable).
+      const configRes = await client.getObject({ objectId: CONFIG_ID, include: { json: true } })
+      const configFields = configRes.object?.json as Record<string, unknown> | null
+      const treasury = configFields?.treasury as string | undefined
+      if (!treasury) {
+        gates.value = []
+        return
+      }
+
+      // List AdminCap objects owned by treasury — one per gate the treasury controls.
+      const { objects } = await client.listOwnedObjects({
+        owner: treasury,
+        type: `${PACKAGE_ID}::access_gate::AdminCap`,
+        include: { json: true },
       })
-      gates.value = events.events.map((e) => {
-        const f = (e.json ?? {}) as Record<string, unknown>
-        return {
-          id: String(f.gate_id ?? ''),
-          name: String(f.nft_name ?? 'Unnamed Gate'),
-          price: BigInt(String(f.price ?? '0')),
-          paused: false,
-          frozen: false,
-          txDigest: e.transactionDigest,
-          checkpoint: e.checkpoint ?? null,
-        }
-      })
+
+      // Fetch each Gate shared object referenced by the AdminCap's gate_id.
+      const gateList = await Promise.all(
+        (objects ?? []).map(async (o: any): Promise<Gate | null> => {
+          const capFields = o?.json ?? o?.object?.json
+          const gateId = String(capFields?.gate_id ?? '')
+          if (!gateId || gateId === 'undefined') return null
+          try {
+            const gateRes = await client.getObject({ objectId: gateId, include: { json: true } })
+            const f = gateRes.object?.json as Record<string, unknown> | null
+            if (!f) return null
+            return {
+              id: gateId,
+              name: String(f.nft_name ?? 'Unnamed Gate'),
+              price: BigInt(String(f.price_mist ?? '0')),
+              paused: Boolean(f.paused),
+              frozen: Boolean(f.frozen),
+              checkpoint: null,
+            }
+          } catch {
+            return null
+          }
+        }),
+      )
+      gates.value = gateList.filter((g): g is Gate => g !== null)
     } catch (e) {
       error.value = e instanceof Error ? e.message : String(e)
     } finally {
