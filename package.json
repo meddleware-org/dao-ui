@@ -1,6 +1,7 @@
 {
   "name": "@meddleware/dao-ui",
-  "version": "0.1.7",
+  "version": "0.1.8",
+  "homepage": "https://docs.meddleware.co.uk/blockchain/sui/dao/",
   "description": "Meddleware DAO console — treasury overview, proposals, and governance on Sui.",
   "author": "Meddleware <dev@meddleware.co.uk>",
   "license": "0BSD",

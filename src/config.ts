@@ -1,3 +1,6 @@
+// Build-time configuration. All chain ids are read from VITE_* env with working
+// testnet defaults; mainnet ids stay empty until deployment (set the _MAINNET vars —
+// no code change needed). PACKAGE_ID / CONFIG_ID / RPC_URL resolve to the active network.
 export type Network = 'testnet' | 'mainnet'
 
 export const NETWORK: Network = (import.meta.env.VITE_NETWORK as Network) || 'testnet'

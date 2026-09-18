@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// Renders one fundraising/governance proposal: status badge, progress toward target,
+// and epochs-left. The Contribute button is disabled until the vault_dao module ships.
 import { computed } from 'vue'
 import type { Proposal } from '../composables/useProposals.js'
 

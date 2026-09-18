@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// Formats a MIST bigint as human SUI (4 dp, trimming trailing zeros below that),
+// rendering "—" for null. Display-only; never source-of-truth for accounting.
 defineProps<{
   mist: bigint | null
   symbol?: string

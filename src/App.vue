@@ -6,6 +6,7 @@ import { NETWORK } from './config.js'
 import DaoView from './DaoView.vue'
 
 const { mode, set } = useColorMode('dark')
+const DOCS_URL = import.meta.env.VITE_DOCS_URL || 'https://docs.meddleware.co.uk/blockchain/sui/dao/'
 </script>
 
 <template>
@@ -22,7 +23,7 @@ const { mode, set } = useColorMode('dark')
 
     <DaoView style="flex: 1; min-height: 0" />
 
-    <AppFooter />
+    <AppFooter :docs-url="DOCS_URL" />
   </div>
 </template>
 

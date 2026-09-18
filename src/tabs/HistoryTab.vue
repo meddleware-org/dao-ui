@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// History tab: paginated on-chain access-gate event log (sold / used / burned) with
+// per-row explorer links. Data comes from useDaoEvents (pruning-tolerant, merged feed).
 import { ref, computed } from 'vue'
 import DataTable from '../components/DataTable.vue'
 import { useDaoEvents } from '../composables/useDaoEvents.js'

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Titled content panel — the console's basic surface primitive. Optional heading + default slot.
 defineProps<{ title?: string }>()
 </script>
 

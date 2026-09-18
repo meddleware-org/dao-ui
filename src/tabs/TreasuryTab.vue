@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// Treasury tab: commission rate + live SUI balance + treasury address, plus the table
+// of Community Gates the treasury controls (discovered via AdminCap ownership).
 import { computed } from 'vue'
 import Panel from '../components/Panel.vue'
 import AmountCell from '../components/AmountCell.vue'

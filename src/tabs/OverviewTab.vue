@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// Overview tab: treasury balance + commission, platform activity counters (active gates,
+// accesses minted/consumed derived from the event feed), and a recent-activity list.
 import { computed } from 'vue'
 import Panel from '../components/Panel.vue'
 import AmountCell from '../components/AmountCell.vue'

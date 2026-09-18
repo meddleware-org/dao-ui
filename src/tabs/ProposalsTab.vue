@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// Proposals tab. Lists proposals via useProposals (currently a stub returning []),
+// showing an empty state until the on-chain vault_dao module lands.
 import ProposalRow from '../components/ProposalRow.vue'
 import { useProposals } from '../composables/useProposals.js'
 import { useEpoch } from '../composables/useEpoch.js'

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// Scrollable table shell with a `head` slot (header cells) and default slot (rows).
+// Renders the `empty` message when no rows are provided.
 defineProps<{ empty?: string }>()
 
 const slots = defineSlots<{

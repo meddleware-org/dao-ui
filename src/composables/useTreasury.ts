@@ -1,3 +1,5 @@
+// Reads the SUI balance of the treasury address. Reactive to the address getter so it
+// refetches when usePlatformConfig resolves; clears to null while the address is unknown.
 import { ref, watch } from 'vue'
 import { getSuiClient } from '../wallet.js'
 

@@ -1,3 +1,6 @@
+// Reads the PlatformConfig shared object once on mount and exposes the treasury
+// address + commission rate (bps). Source of truth for the commission model and for
+// whose AdminCaps the gate discovery (useGates) looks up.
 import { ref, onMounted } from 'vue'
 import { getSuiClient } from '../wallet.js'
 import { CONFIG_ID } from '../config.js'

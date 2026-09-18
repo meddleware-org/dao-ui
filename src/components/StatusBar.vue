@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// Bottom status bar: network + health dot (error-driven), current epoch, and a
+// relative "refreshed Ns ago" timestamp. Purely presentational.
 import { computed } from 'vue'
 import { NETWORK } from '../config.js'
 

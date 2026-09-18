@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// Bespoke raised-tab navigation for the console (v-model + typed tabs). Deliberately
+// distinct from the shared @meddleware/ui tab styling — the desktop-app look is intentional.
 export interface Tab {
   id: string
   label: string
