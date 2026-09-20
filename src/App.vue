@@ -7,6 +7,7 @@ import DaoView from './DaoView.vue'
 
 const { mode, set } = useColorMode('dark')
 const DOCS_URL = import.meta.env.VITE_DOCS_URL || 'https://docs.meddleware.co.uk/blockchain/sui/dao/'
+const DEV_URL  = import.meta.env.VITE_DEV_URL  || 'https://dev.meddleware.co.uk/sui/dao/'
 </script>
 
 <template>
@@ -23,7 +24,7 @@ const DOCS_URL = import.meta.env.VITE_DOCS_URL || 'https://docs.meddleware.co.uk
 
     <DaoView style="flex: 1; min-height: 0" />
 
-    <AppFooter :docs-url="DOCS_URL" />
+    <AppFooter :docs-url="DOCS_URL" :dev-url="DEV_URL" />
   </div>
 </template>
 

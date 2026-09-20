@@ -9,12 +9,12 @@
 #   VITE_RPC_MAINNET                          — override default Sui gRPC URL (optional)
 #   VITE_ACCESS_GATE_PACKAGE_ID_MAINNET       — access_gate package ID on mainnet (optional)
 #   VITE_PLATFORM_CONFIG_ID_MAINNET           — PlatformConfig object ID on mainnet (optional)
-FROM node:22-slim AS build
+FROM node:24-slim AS build
 
 WORKDIR /app
 
-COPY package.json ./
-RUN npm install
+COPY package.json package-lock.json ./
+RUN npm ci
 COPY . .
 
 ARG VITE_NETWORK=testnet
