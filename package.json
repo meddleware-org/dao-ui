@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@meddleware/design-tokens": "^0.1.5",
-    "@meddleware/ui": "^0.1.20",
+    "@meddleware/ui": "^0.1.21",
     "@meddleware/wallet-adapter": "^0.0.7",
     "@mysten/sui": "^2.31.0",
     "vue": "^3.5.43"
