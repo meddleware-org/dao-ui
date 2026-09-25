@@ -1,32 +1,19 @@
 <script setup lang="ts">
-// Bespoke raised-tab navigation for the console (v-model + typed tabs). Deliberately
-// distinct from the shared @meddleware/ui tab styling — the desktop-app look is intentional.
-export interface Tab {
-  id: string
-  label: string
-}
+// Thin wrapper over AppTabNav variant="raised" from @meddleware/ui.
+// Keeps dao-ui's internal import path stable while using the shared component.
+import { AppTabNav } from '@meddleware/ui'
+export type { AppTab as Tab } from '@meddleware/ui'
 
-defineProps<{
-  tabs: Tab[]
-  modelValue: string
-}>()
-
-const emit = defineEmits<{
-  'update:modelValue': [id: string]
-}>()
+defineProps<{ tabs: { id: string; label: string }[]; modelValue: string }>()
+const emit = defineEmits<{ 'update:modelValue': [id: string] }>()
 </script>
 
 <template>
-  <nav class="dao-tabs" aria-label="DAO sections">
-    <button
-      v-for="tab in tabs"
-      :key="tab.id"
-      class="dao-tab"
-      :class="{ 'dao-tab--active': modelValue === tab.id }"
-      :aria-current="modelValue === tab.id ? 'page' : undefined"
-      @click="emit('update:modelValue', tab.id)"
-    >
-      {{ tab.label }}
-    </button>
-  </nav>
+  <AppTabNav
+    :tabs="tabs"
+    :model-value="modelValue"
+    variant="raised"
+    aria-label="DAO sections"
+    @update:model-value="emit('update:modelValue', $event)"
+  />
 </template>
