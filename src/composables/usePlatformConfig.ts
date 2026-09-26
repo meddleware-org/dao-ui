@@ -1,7 +1,7 @@
 // Reads the PlatformConfig shared object once on mount and exposes the treasury
 // address + commission rate (bps). Source of truth for the commission model and for
 // whose AdminCaps the gate discovery (useGates) looks up.
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, getCurrentInstance } from 'vue'
 import { getSuiClient } from '../wallet.js'
 import { CONFIG_ID } from '../config.js'
 
@@ -35,7 +35,8 @@ export function usePlatformConfig() {
     }
   }
 
-  onMounted(load)
+  // Auto-load on mount, but only when used inside a component (skips in unit tests).
+  if (getCurrentInstance()) onMounted(load)
 
   return { config, loading, error, reload: load }
 }

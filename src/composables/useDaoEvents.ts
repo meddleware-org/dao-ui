@@ -1,4 +1,4 @@
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, getCurrentInstance } from 'vue'
 import { getSuiClient } from '../wallet.js'
 import { PACKAGE_ID } from '../config.js'
 
@@ -68,7 +68,8 @@ export function useDaoEvents(limit = 20) {
     }
   }
 
-  onMounted(load)
+  // Auto-load on mount, but only when used inside a component (skips in unit tests).
+  if (getCurrentInstance()) onMounted(load)
 
   return { events, loading, error, lastRefresh, reload: load }
 }
