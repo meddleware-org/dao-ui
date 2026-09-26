@@ -2,13 +2,19 @@
 // Treasury tab: commission rate + live SUI balance + treasury address, plus the table
 // of Community Gates the treasury controls (discovered via AdminCap ownership).
 import { computed } from 'vue'
-import Panel from '../components/Panel.vue'
 import AmountCell from '../components/AmountCell.vue'
-import DataTable from '../components/DataTable.vue'
 import { usePlatformConfig } from '../composables/usePlatformConfig.js'
 import { useTreasury } from '../composables/useTreasury.js'
 import { useGates } from '../composables/useGates.js'
-import { CopyableAddress, ExplorerLink, suiExplorerUrl } from '@meddleware/ui'
+import {
+  CopyableAddress,
+  ExplorerLink,
+  suiExplorerUrl,
+  UiPanel,
+  UiStatGrid,
+  UiStatRow,
+  UiDataTable,
+} from '@meddleware/ui'
 import { NETWORK } from '../config.js'
 
 const { config, loading: cfgLoading, error: cfgErr } = usePlatformConfig()
@@ -27,31 +33,26 @@ function formatPrice(mist: bigint): string {
 
 <template>
   <div style="display: flex; flex-direction: column; gap: 10px">
-    <Panel title="Treasury">
+    <UiPanel title="Treasury">
       <p v-if="cfgLoading" class="dao-muted">Loading…</p>
       <p v-else-if="cfgErr" class="dao-muted">{{ cfgErr }}</p>
       <template v-else-if="config">
-        <div class="dao-stat-grid" style="max-width: 480px">
-          <span class="dao-stat-grid__label">Commission rate</span>
-          <span class="dao-stat-grid__value dao-mono">{{ commissionPct }} ({{ config.commissionBps }} bps)</span>
-
-          <span class="dao-stat-grid__label">Current balance</span>
-          <AmountCell class="dao-stat-grid__value" :mist="balance" />
-
-          <span class="dao-stat-grid__label">Treasury address</span>
-          <span class="dao-stat-grid__value" style="text-align: left">
+        <UiStatGrid style="max-width: 480px">
+          <UiStatRow label="Commission rate">{{ commissionPct }} ({{ config.commissionBps }} bps)</UiStatRow>
+          <UiStatRow label="Current balance"><AmountCell :mist="balance" /></UiStatRow>
+          <UiStatRow label="Treasury address" align="left">
             <CopyableAddress :address="config.treasury">
               <ExplorerLink :href="suiExplorerUrl('account', config.treasury, NETWORK)" :value="config.treasury" />
             </CopyableAddress>
-          </span>
-        </div>
+          </UiStatRow>
+        </UiStatGrid>
       </template>
       <p v-else class="dao-muted">PlatformConfig not loaded.</p>
-    </Panel>
+    </UiPanel>
 
-    <Panel title="Community Gates">
+    <UiPanel title="Community Gates">
       <p v-if="gatesLoading" class="dao-muted">Loading gates…</p>
-      <DataTable v-else-if="gates.length" :empty="'No gates found'">
+      <UiDataTable v-else-if="gates.length" :empty="'No gates found'">
         <template #head>
           <th>Gate name</th>
           <th>Price</th>
@@ -66,8 +67,8 @@ function formatPrice(mist: bigint): string {
             </CopyableAddress>
           </td>
         </tr>
-      </DataTable>
+      </UiDataTable>
       <p v-else class="dao-placeholder">No gates found.</p>
-    </Panel>
+    </UiPanel>
   </div>
 </template>

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 // Bottom status bar: network + health dot (error-driven), current epoch, and a
-// relative "refreshed Ns ago" timestamp. Purely presentational.
+// relative "refreshed Ns ago" timestamp. Built on the shared UiStatusBar/UiStatusDot.
 import { computed } from 'vue'
+import { UiStatusBar, UiStatusDot } from '@meddleware/ui'
 import { NETWORK } from '../config.js'
 
 const props = defineProps<{
@@ -10,7 +11,7 @@ const props = defineProps<{
   error?: boolean
 }>()
 
-const dotClass = computed(() => (props.error ? 'dao-statusbar__dot--error' : 'dao-statusbar__dot--ok'))
+const dotStatus = computed<'ok' | 'error'>(() => (props.error ? 'error' : 'ok'))
 
 function timeAgo(d: Date): string {
   const s = Math.floor((Date.now() - d.getTime()) / 1000)
@@ -21,16 +22,16 @@ function timeAgo(d: Date): string {
 </script>
 
 <template>
-  <footer class="dao-statusbar">
-    <span class="dao-statusbar__item">
-      <span class="dao-statusbar__dot" :class="dotClass" />
+  <UiStatusBar>
+    <span class="mw-statusbar__item">
+      <UiStatusDot :status="dotStatus" />
       {{ NETWORK.charAt(0).toUpperCase() + NETWORK.slice(1) }}
     </span>
-    <span class="dao-statusbar__sep">│</span>
-    <span v-if="epoch !== null" class="dao-statusbar__item">Epoch {{ epoch }}</span>
-    <span v-else class="dao-statusbar__item dao-muted">Epoch —</span>
-    <span class="dao-statusbar__sep">│</span>
-    <span v-if="lastRefresh" class="dao-statusbar__item">Refreshed {{ timeAgo(lastRefresh) }}</span>
-    <span v-else class="dao-statusbar__item dao-muted">Loading…</span>
-  </footer>
+    <span class="mw-statusbar__sep">│</span>
+    <span v-if="epoch !== null" class="mw-statusbar__item">Epoch {{ epoch }}</span>
+    <span v-else class="mw-statusbar__item dao-muted">Epoch —</span>
+    <span class="mw-statusbar__sep">│</span>
+    <span v-if="lastRefresh" class="mw-statusbar__item">Refreshed {{ timeAgo(lastRefresh) }}</span>
+    <span v-else class="mw-statusbar__item dao-muted">Loading…</span>
+  </UiStatusBar>
 </template>

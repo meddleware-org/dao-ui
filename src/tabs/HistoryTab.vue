@@ -2,9 +2,15 @@
 // History tab: paginated on-chain access-gate event log (sold / used / burned) with
 // per-row explorer links. Data comes from useDaoEvents (pruning-tolerant, merged feed).
 import { ref, computed } from 'vue'
-import DataTable from '../components/DataTable.vue'
 import { useDaoEvents } from '../composables/useDaoEvents.js'
-import { CopyableAddress, ExplorerLink, suiExplorerUrl } from '@meddleware/ui'
+import {
+  CopyableAddress,
+  ExplorerLink,
+  suiExplorerUrl,
+  UiDataTable,
+  UiBadge,
+  UiToolbarButton,
+} from '@meddleware/ui'
 import { NETWORK } from '../config.js'
 import type { DaoEvent } from '../composables/useDaoEvents.js'
 
@@ -27,20 +33,23 @@ const eventLabel: Record<DaoEvent['type'], string> = {
   AccessBurned: 'Access Burned',
 }
 
+function badgeVariant(type: DaoEvent['type']): 'active' | 'closed' {
+  return type === 'AccessMinted' ? 'active' : 'closed'
+}
 </script>
 
 <template>
   <div>
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px">
       <p class="dao-section-title" style="margin: 0">On-Chain Events</p>
-      <button class="dao-toolbar__btn" :disabled="loading" @click="reload">
+      <UiToolbarButton :disabled="loading" @click="reload">
         {{ loading ? 'Loading…' : 'Refresh' }}
-      </button>
+      </UiToolbarButton>
     </div>
 
     <p v-if="error" class="dao-muted">{{ error }}</p>
 
-    <DataTable v-if="pageEvents.length || loading" :empty="'No events'">
+    <UiDataTable v-if="pageEvents.length || loading" :empty="'No events'">
       <template #head>
         <th>Type</th>
         <th>
@@ -57,15 +66,7 @@ const eventLabel: Record<DaoEvent['type'], string> = {
         </th>
       </template>
       <tr v-for="ev in pageEvents" :key="ev.txDigest">
-        <td>
-          <span
-            class="dao-badge"
-            :class="{
-              'dao-badge--active': ev.type === 'AccessMinted',
-              'dao-badge--closed': ev.type === 'AccessConsumed' || ev.type === 'AccessBurned',
-            }"
-          >{{ eventLabel[ev.type] }}</span>
-        </td>
+        <td><UiBadge :variant="badgeVariant(ev.type)">{{ eventLabel[ev.type] }}</UiBadge></td>
         <td class="dao-mono" style="font-size: 0.72rem; white-space: nowrap">
           <CopyableAddress v-if="ev.address && ev.address !== 'undefined'" :address="ev.address">
             <ExplorerLink :href="suiExplorerUrl('account', ev.address, NETWORK)" :value="ev.address" />
@@ -81,13 +82,13 @@ const eventLabel: Record<DaoEvent['type'], string> = {
           </CopyableAddress>
         </td>
       </tr>
-    </DataTable>
+    </UiDataTable>
     <p v-else-if="!loading" class="dao-placeholder">No events found.</p>
 
     <div v-if="totalPages > 1" class="dao-pagination">
-      <button class="dao-toolbar__btn" :disabled="page === 1" @click="prevPage">← Prev</button>
+      <UiToolbarButton :disabled="page === 1" @click="prevPage">← Prev</UiToolbarButton>
       <span class="dao-muted" style="font-size: 0.78rem">Page {{ page }} / {{ totalPages }}</span>
-      <button class="dao-toolbar__btn" :disabled="page === totalPages" @click="nextPage">Next →</button>
+      <UiToolbarButton :disabled="page === totalPages" @click="nextPage">Next →</UiToolbarButton>
     </div>
   </div>
 </template>

@@ -7,6 +7,7 @@
 // DaoView is consumed as a library by the dashboard or any other host.
 import './styles/qt.css'
 import { ref, computed } from 'vue'
+import { UiToolbar, UiToolbarButton } from '@meddleware/ui'
 import TabBar from './components/TabBar.vue'
 import StatusBar from './components/StatusBar.vue'
 import OverviewTab from './tabs/OverviewTab.vue'
@@ -45,9 +46,9 @@ const { epoch } = useEpoch()
 
 <template>
   <div class="dao-view">
-    <div class="dao-toolbar">
-      <button class="dao-toolbar__btn" @click="activeTab = 'overview'">🏛 Meddleware DAO</button>
-    </div>
+    <UiToolbar>
+      <UiToolbarButton @click="activeTab = 'overview'">🏛 Meddleware DAO</UiToolbarButton>
+    </UiToolbar>
 
     <TabBar :tabs="TABS" v-model="activeTab" />
 

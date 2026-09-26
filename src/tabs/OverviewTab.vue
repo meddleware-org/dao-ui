@@ -2,13 +2,21 @@
 // Overview tab: treasury balance + commission, platform activity counters (active gates,
 // accesses minted/consumed derived from the event feed), and a recent-activity list.
 import { computed } from 'vue'
-import Panel from '../components/Panel.vue'
 import AmountCell from '../components/AmountCell.vue'
 import { usePlatformConfig } from '../composables/usePlatformConfig.js'
 import { useTreasury } from '../composables/useTreasury.js'
 import { useDaoEvents } from '../composables/useDaoEvents.js'
 import { useGates } from '../composables/useGates.js'
-import { CopyableAddress, ExplorerLink, suiExplorerUrl } from '@meddleware/ui'
+import {
+  CopyableAddress,
+  ExplorerLink,
+  suiExplorerUrl,
+  UiPanel,
+  UiStatGrid,
+  UiStatRow,
+  UiActivityFeed,
+  UiActivityItem,
+} from '@meddleware/ui'
 import { NETWORK } from '../config.js'
 import type { DaoEvent } from '../composables/useDaoEvents.js'
 
@@ -35,49 +43,40 @@ const accessesConsumed = computed(() => events.value.filter((e) => e.type === 'A
   <div class="dao-overview-cols">
     <!-- Left: treasury summary -->
     <div style="display: flex; flex-direction: column; gap: 8px">
-      <Panel title="Treasury Balance">
-        <div class="dao-stat-grid">
-          <span class="dao-stat-grid__label">SUI balance</span>
-          <AmountCell class="dao-stat-grid__value" :mist="balance" />
-
-          <span class="dao-stat-grid__label">Commission rate</span>
-          <span class="dao-stat-grid__value dao-mono">{{ commissionPct }}</span>
-
-          <span class="dao-stat-grid__label">Treasury address</span>
-          <span class="dao-stat-grid__value" style="text-align: left">
+      <UiPanel title="Treasury Balance">
+        <UiStatGrid>
+          <UiStatRow label="SUI balance"><AmountCell :mist="balance" /></UiStatRow>
+          <UiStatRow label="Commission rate">{{ commissionPct }}</UiStatRow>
+          <UiStatRow label="Treasury address" align="left">
             <CopyableAddress v-if="config?.treasury" :address="config.treasury">
               <ExplorerLink :href="suiExplorerUrl('account', config.treasury, NETWORK)" :value="config.treasury" />
             </CopyableAddress>
             <span v-else class="dao-mono" style="font-size: 0.7rem">—</span>
-          </span>
-        </div>
-      </Panel>
+          </UiStatRow>
+        </UiStatGrid>
+      </UiPanel>
 
-      <Panel title="Platform Activity">
-        <div class="dao-stat-grid">
-          <span class="dao-stat-grid__label">Active gates</span>
-          <span class="dao-stat-grid__value dao-mono">{{ gatesLoading ? '…' : gates.length }}</span>
-
-          <span class="dao-stat-grid__label">Accesses minted</span>
-          <span class="dao-stat-grid__value dao-mono">{{ accessesMinted || '—' }}</span>
-
-          <span class="dao-stat-grid__label">Accesses consumed</span>
-          <span class="dao-stat-grid__value dao-mono">{{ accessesConsumed || '—' }}</span>
-        </div>
-      </Panel>
+      <UiPanel title="Platform Activity">
+        <UiStatGrid>
+          <UiStatRow label="Active gates">{{ gatesLoading ? '…' : gates.length }}</UiStatRow>
+          <UiStatRow label="Accesses minted">{{ accessesMinted || '—' }}</UiStatRow>
+          <UiStatRow label="Accesses consumed">{{ accessesConsumed || '—' }}</UiStatRow>
+        </UiStatGrid>
+      </UiPanel>
     </div>
 
     <!-- Right: recent activity -->
-    <Panel title="Recent Activity">
+    <UiPanel title="Recent Activity">
       <p v-if="eventsLoading" class="dao-muted" style="margin: 0">Loading events…</p>
-      <ul v-else-if="events.length" class="dao-feed">
-        <li v-for="ev in events" :key="ev.txDigest" class="dao-feed__item">
-          <span class="dao-feed__dot" />
-          <span class="dao-feed__type">{{ eventLabel[ev.type] }}</span>
-          <span class="dao-feed__time">ckpt {{ ev.checkpoint ?? '?' }}</span>
-        </li>
-      </ul>
+      <UiActivityFeed v-else-if="events.length">
+        <UiActivityItem
+          v-for="ev in events"
+          :key="ev.txDigest"
+          :type="eventLabel[ev.type]"
+          :time="`ckpt ${ev.checkpoint ?? '?'}`"
+        />
+      </UiActivityFeed>
       <p v-else class="dao-placeholder">No recent events.</p>
-    </Panel>
+    </UiPanel>
   </div>
 </template>
