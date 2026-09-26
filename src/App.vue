@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Standalone shell for the DAO SPA. The core UI lives in DaoView.vue (also exported
 // for inline embedding in the dashboard).
-import { AppHeader, AppFooter, ColorModeControl, useColorMode } from '@meddleware/ui'
+import { AppHeader, AppFooter, ColorModeControl, CopyrightLine, useColorMode } from '@meddleware/ui'
 import { NETWORK } from './config.js'
 import DaoView from './DaoView.vue'
 
@@ -24,7 +24,11 @@ const DEV_URL  = import.meta.env.VITE_DEV_URL  || 'https://dev.meddleware.co.uk/
 
     <DaoView style="flex: 1; min-height: 0" />
 
-    <AppFooter :docs-url="DOCS_URL" :dev-url="DEV_URL" />
+    <AppFooter :docs-url="DOCS_URL" :dev-url="DEV_URL">
+      <template #start>
+        <CopyrightLine symbol-variant="kopimi" organisation-name="Meddleware" rights-statement="jam" />
+      </template>
+    </AppFooter>
   </div>
 </template>
 
