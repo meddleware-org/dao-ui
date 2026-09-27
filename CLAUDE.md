@@ -28,9 +28,13 @@ whose `DaoView` is embedded inline in the dashboard (`sui.meddleware.co.uk`) as 
   shared `@meddleware/wallet-adapter` singleton (bound to this app's network/RPC). The singleton
   means that when `DaoView` embeds in the dashboard next to other tool views, they share one
   connection. Do not reintroduce a local wallet-standard implementation.
-- **Desktop-application aesthetic is deliberate.** `styles/qt.css` gives the console a raised-tab,
-  status-bar, panel-based "native app" look. `TabBar.vue` is intentionally distinct from the shared
-  `@meddleware/ui` tab styling and stays bespoke.
+- **Desktop-application aesthetic is deliberate.** The console's raised tabs, toolbar, panels and
+  status bar come from the shared `@meddleware/ui` qt primitives (`AppTabNav variant="raised"` +
+  `UiTabPanel`, `UiToolbar`, `UiPanel`, `UiStatusBar`), shared with `treasury-ui`; `styles/qt.css`
+  holds only small app-local utilities (stack, amount, progress, text helpers).
+- **Semantic markup, no inline styles.** Presentation lives in `qt.css` or scoped `<style>` blocks,
+  never `style=""` attributes; `npm run lint:html` (html-validate) enforces this along with element
+  content models.
 
 ## Key files
 
@@ -38,7 +42,7 @@ whose `DaoView` is embedded inline in the dashboard (`sui.meddleware.co.uk`) as 
 | --- | --- |
 | `src/config.ts` | Build-time env: network, RPC, `access_gate` package id, `PlatformConfig` id. Derives `PACKAGE_ID` / `CONFIG_ID` / `RPC_URL` for the active network. |
 | `src/wallet.ts` | Shim over `@meddleware/wallet-adapter`; exposes `getSuiClient()` (bare reads) + `useWallet()` (sign-only, `sui:signPersonalMessage`). |
-| `src/DaoView.vue` | Core tool UI — tab shell + status bar. Imports `styles/qt.css` itself so it works when consumed as a library. Exported from `src/index.ts`. |
+| `src/DaoView.vue` | Core tool UI — `UiToolbar`, `AppTabNav` + `UiTabPanel`, and `UiStatusBar` (network/epoch/refresh). Imports `styles/qt.css` itself so it works when consumed as a library. Exported from `src/index.ts`. |
 | `src/index.ts` | Library entry — exports `DaoView`. |
 | `src/App.vue` | Standalone shell only: `AppHeader` (+ network badge, `ColorModeControl`) + `<DaoView>` + `AppFooter`. |
 | `src/main.ts` | Standalone bootstrap — imports design-tokens + ui base CSS + `qt.css`, mounts `App`. |
@@ -49,8 +53,8 @@ whose `DaoView` is embedded inline in the dashboard (`sui.meddleware.co.uk`) as 
 | `src/composables/useProposals.ts` | **Stub** — empty list until `vault_dao` ships; `Proposal` shape kept stable. |
 | `src/composables/useEpoch.ts` | Current Sui epoch for the status bar (non-fatal on failure). |
 | `src/tabs/*` | Overview / Treasury / Proposals / Governance / History tab views. |
-| `src/components/*` | Presentational: `TabBar`, `StatusBar`, `Panel`, `DataTable`, `AmountCell`, `ProposalRow`. |
-| `src/styles/qt.css` | The console's scoped visual language (panels, tabs, status bar, badges). |
+| `src/components/*` | Presentational: `AmountCell`, `ProposalRow` (a proposal panel with a native `<progress>`). |
+| `src/styles/qt.css` | App-local console utilities (layout stack, amounts, progress bar, text helpers). |
 
 ## Dual app + library
 

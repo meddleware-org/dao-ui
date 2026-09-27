@@ -50,20 +50,20 @@ watch(
 </script>
 
 <template>
-  <div style="display: flex; flex-direction: column; gap: 10px">
+  <div class="dao-stack gov">
     <UiPanel title="Platform Parameters">
-      <UiStatGrid style="max-width: 480px">
+      <UiStatGrid class="dao-stat-grid">
         <UiStatRow label="Commission rate">{{ commissionPct }}</UiStatRow>
         <UiStatRow label="Max commission cap">10.00% (1000 bps — on-chain hard cap)</UiStatRow>
         <UiStatRow label="Treasury address" align="left">
           <CopyableAddress v-if="config?.treasury" :address="config.treasury">
             <ExplorerLink :href="suiExplorerUrl('account', config.treasury, NETWORK)" :value="config.treasury" />
           </CopyableAddress>
-          <span v-else class="dao-mono" style="font-size: 0.7rem">—</span>
+          <span v-else class="dao-mono dao-mono--sm">—</span>
         </UiStatRow>
       </UiStatGrid>
 
-      <p class="dao-muted" style="margin: 10px 0 0; font-size: 0.72rem">
+      <p class="dao-muted gov__footnote">
         Parameters are governed by <code>PlatformAdminCap</code> on-chain.
         Commission is charged on every NFT access purchase:
         <code>commission_bps / 10000 × price</code> routes to treasury;
@@ -74,31 +74,31 @@ watch(
     <UiPanel title="Admin Actions">
       <!-- Not connected -->
       <template v-if="!account">
-        <p class="dao-muted" style="margin: 0; font-size: 0.78rem">
+        <p class="dao-muted">
           Connect a wallet via the header to manage platform settings.
         </p>
       </template>
 
       <!-- Connected, checking -->
       <template v-else-if="capState === 'checking'">
-        <p class="dao-muted" style="margin: 0; font-size: 0.78rem">
+        <p class="dao-muted">
           Checking capabilities for {{ account.address.slice(0, 10) }}…
         </p>
       </template>
 
       <!-- Connected, has PlatformAdminCap -->
       <template v-else-if="capState === 'found'">
-        <p class="dao-muted" style="margin: 0 0 8px; font-size: 0.78rem">
-          <span style="color: var(--ok)">●</span>
+        <p class="dao-muted">
+          <span class="gov__ok" aria-hidden="true">●</span>
           <code>PlatformAdminCap</code> detected. Admin controls will appear here when implemented.
         </p>
       </template>
 
       <!-- Connected, no cap -->
       <template v-else-if="capState === 'not-found'">
-        <p class="dao-muted" style="margin: 0; font-size: 0.78rem">
-          <span>●</span>
-          Connected: {{ account.address.slice(0, 10) }}…{{ account.address.slice(-6) }}<br>
+        <p class="dao-muted">
+          <span aria-hidden="true">●</span>
+          Connected: {{ account.address.slice(0, 10) }}…{{ account.address.slice(-6) }}<br />
           This wallet does not hold <code>PlatformAdminCap</code> or <code>DaoAdminCap</code>.
           Privileged actions are not available.
         </p>
@@ -106,10 +106,23 @@ watch(
 
       <!-- Error -->
       <template v-else-if="capState === 'error'">
-        <p class="dao-muted" style="margin: 0; font-size: 0.78rem">
+        <p class="dao-muted">
           Unable to verify capabilities. Check your connection and try again.
         </p>
       </template>
     </UiPanel>
   </div>
 </template>
+
+<style scoped>
+.gov p {
+  margin: 0;
+}
+.gov .gov__footnote {
+  margin-top: 10px;
+  font-size: 0.72rem;
+}
+.gov__ok {
+  color: var(--ok);
+}
+</style>

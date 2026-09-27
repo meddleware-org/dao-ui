@@ -22,7 +22,7 @@ const DEV_URL  = import.meta.env.VITE_DEV_URL  || 'https://dev.meddleware.co.uk/
       </template>
     </AppHeader>
 
-    <DaoView style="flex: 1; min-height: 0" />
+    <DaoView />
 
     <AppFooter :docs-url="DOCS_URL" :dev-url="DEV_URL">
       <template #start>

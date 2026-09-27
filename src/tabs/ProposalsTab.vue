@@ -10,18 +10,13 @@ const { epoch } = useEpoch()
 </script>
 
 <template>
-  <div>
-    <template v-if="proposals.length > 0">
-      <p class="dao-section-title">Active &amp; Pending Proposals</p>
-      <ProposalRow
-        v-for="p in proposals"
-        :key="p.id"
-        :proposal="p"
-        :current-epoch="epoch"
-      />
-    </template>
-    <div v-else class="dao-placeholder">
-      No proposals yet.
-    </div>
-  </div>
+  <template v-if="proposals.length > 0">
+    <h2 class="dao-section-title">Active &amp; Pending Proposals</h2>
+    <ul role="list">
+      <li v-for="p in proposals" :key="p.id">
+        <ProposalRow :proposal="p" :current-epoch="epoch" />
+      </li>
+    </ul>
+  </template>
+  <p v-else class="dao-placeholder">No proposals yet.</p>
 </template>

@@ -33,36 +33,65 @@ function formatSui(mist: bigint): string {
 </script>
 
 <template>
-  <UiPanel style="margin-bottom: 8px">
-    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 6px">
-      <div>
-        <UiBadge :variant="badgeVariant" style="margin-right: 6px">{{ proposal.status }}</UiBadge>
-        <strong style="font-size: 0.85rem">{{ proposal.title }}</strong>
-      </div>
-      <span class="dao-muted" style="white-space: nowrap; font-family: var(--mw-font-mono); font-size: 0.75rem">
+  <UiPanel class="proposal">
+    <header class="proposal__head">
+      <UiBadge :variant="badgeVariant">{{ proposal.status }}</UiBadge>
+      <h3 class="proposal__title">{{ proposal.title }}</h3>
+      <small class="proposal__epochs">
         <template v-if="epochsLeft !== null && epochsLeft > 0">{{ epochsLeft }} epochs left</template>
         <template v-else-if="epochsLeft !== null && epochsLeft <= 0">Expired</template>
-      </span>
-    </div>
+      </small>
+    </header>
 
-    <p class="dao-muted" style="margin: 0 0 8px; font-size: 0.78rem">{{ proposal.description }}</p>
+    <p class="dao-muted proposal__desc">{{ proposal.description }}</p>
 
-    <div style="margin-bottom: 4px">
-      <div class="dao-progress">
-        <div class="dao-progress__fill" :style="{ width: `${pct}%` }" />
-      </div>
-      <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--muted); font-family: var(--mw-font-mono); margin-top: 2px">
-        <span>{{ formatSui(proposal.contributedMist) }} SUI raised</span>
-        <span>{{ pct }}% of {{ formatSui(proposal.targetMist) }} SUI target</span>
-      </div>
-    </div>
+    <progress class="dao-progress" :value="pct" max="100" aria-label="Funding progress">{{ pct }}%</progress>
+    <p class="proposal__totals">
+      <span>{{ formatSui(proposal.contributedMist) }} SUI raised</span>
+      <span>{{ pct }}% of {{ formatSui(proposal.targetMist) }} SUI target</span>
+    </p>
 
-    <UiToolbarButton
-      disabled
-      title="Vault DAO governance module launching soon"
-      style="margin-top: 6px; opacity: 0.5; cursor: not-allowed"
-    >
+    <UiToolbarButton disabled title="Vault DAO governance module launching soon" class="proposal__contribute">
       Contribute
     </UiToolbarButton>
   </UiPanel>
 </template>
+
+<style scoped>
+.proposal {
+  margin-bottom: 8px;
+}
+.proposal__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.proposal__title {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.proposal__epochs {
+  margin-inline-start: auto;
+  padding-inline-start: 8px;
+  white-space: nowrap;
+  font-family: var(--mw-font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.proposal__desc {
+  margin: 0 0 8px;
+}
+.proposal__totals {
+  display: flex;
+  justify-content: space-between;
+  margin: 2px 0 4px;
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-family: var(--mw-font-mono);
+}
+.proposal__contribute {
+  margin-top: 6px;
+}
+</style>
