@@ -5,7 +5,15 @@
 The **Meddleware DAO console**: a Vue 3 SPA that surfaces the platform's on-chain state on Sui —
 treasury balance, commission policy, the community access gates the treasury controls, and a live
 feed of access-gate activity. It is both a standalone SPA (`sui-dao.meddleware.co.uk`) and a library
-whose `DaoView` is embedded inline in the dashboard (`sui.meddleware.co.uk`) as the default view.
+exporting `DaoView` for inline embedding in the dashboard (`dash.meddleware.co.uk`).
+
+**Temporarily retired from the dashboard.** Until governance is actually available (nothing to vote
+on or join until after launch, while the business side and final real-world testing are completed),
+the dashboard does not show `DaoView` — a governance surface before it is usable would distract users
+from the offerings that are live. Its route is commented out in the dashboard and
+`@meddleware/treasury-ui` (`TreasuryView`) fills the organisation-metrics role instead, without
+governance framing. The dashboard keeps the `@meddleware/dao-ui` dependency so re-enabling it is a
+one-line route change once DAO participation ships. Keep this package working and publishable.
 
 ## Architectural invariants
 

@@ -4,8 +4,9 @@ The **Meddleware DAO console** — a standalone Vue 3 SPA (and embeddable librar
 platform's on-chain state on Sui: treasury balance, commission policy, the community access gates the
 treasury controls, and a live feed of access-gate activity.
 
-Deployed at `sui-dao.meddleware.co.uk` and also embedded inline in the tools hub
-(`sui.meddleware.co.uk`) as the default view.
+Deployed at `sui-dao.meddleware.co.uk`. It will also be embedded inline in the tools hub
+(`dash.meddleware.co.uk`) once governance is available; until then the hub shows the read-only
+Treasury console (`@meddleware/treasury-ui`) in its place.
 
 ## What it shows
 
