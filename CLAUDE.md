@@ -43,6 +43,8 @@ one-line route change once DAO participation ships. Keep this package working an
   shared `@meddleware/wallet-adapter` singleton (bound to this app's network/RPC). The singleton
   means that when `DaoView` embeds in the dashboard next to other tool views, they share one
   connection. Do not reintroduce a local wallet-standard implementation.
+  Declare `@meddleware/wallet-adapter` as a peerDependency (`>=0.0.12 <0.2.0`, plus a devDependency):
+  the host's single copy must satisfy every embedded tool, or each gets its own connection.
 - **Desktop-application aesthetic is deliberate.** The console's raised tabs, toolbar, panels and
   status bar come from the shared `@meddleware/ui` qt primitives (`AppTabNav variant="raised"` +
   `UiTabPanel`, `UiToolbar`, `UiPanel`, `UiStatusBar`), shared with `treasury-ui`; `styles/qt.css`
