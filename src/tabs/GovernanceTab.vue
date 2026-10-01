@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
+import { ownsPlatformAdminCap } from '@meddleware/access-gate-client'
 import { usePlatformConfig } from '../composables/usePlatformConfig.js'
 import { useWallet, getSuiClient } from '../wallet.js'
-import { PACKAGE_ID } from '../config.js'
+import { explorerNetwork, network, requireDeployment } from '../config.js'
 import {
   CopyableAddress,
   ExplorerLink,
@@ -11,7 +12,6 @@ import {
   UiStatGrid,
   UiStatRow,
 } from '@meddleware/ui'
-import { NETWORK } from '../config.js'
 
 const { config } = usePlatformConfig()
 const { account } = useWallet()
@@ -23,27 +23,28 @@ const commissionPct = computed(() =>
 type CapState = 'idle' | 'checking' | 'found' | 'not-found' | 'error'
 const capState = ref<CapState>('idle')
 
+let checkGeneration = 0
+
 async function checkCaps(address: string) {
-  if (!PACKAGE_ID) { capState.value = 'not-found'; return }
+  const mine = ++checkGeneration
   capState.value = 'checking'
   try {
-    const client = getSuiClient()
-    const res = await client.listOwnedObjects({
-      owner: address,
-      type: `${PACKAGE_ID}::access_gate::PlatformAdminCap`,
-      limit: 1,
-    })
-    capState.value = res.objects.length > 0 ? 'found' : 'not-found'
+    const owns = await ownsPlatformAdminCap(getSuiClient(), address, requireDeployment().originalId)
+    if (mine === checkGeneration) capState.value = owns ? 'found' : 'not-found'
   } catch {
-    capState.value = 'error'
+    if (mine === checkGeneration) capState.value = 'error'
   }
 }
 
+// Re-check on an account switch and on a network switch (caps are per network).
 watch(
-  () => account.value?.address,
-  (addr) => {
+  [() => account.value?.address, network],
+  ([addr]) => {
     if (addr) void checkCaps(addr)
-    else capState.value = 'idle'
+    else {
+      checkGeneration++
+      capState.value = 'idle'
+    }
   },
   { immediate: true },
 )
@@ -57,7 +58,7 @@ watch(
         <UiStatRow label="Max commission cap">10.00% (1000 bps — on-chain hard cap)</UiStatRow>
         <UiStatRow label="Treasury address" align="left">
           <CopyableAddress v-if="config?.treasury" :address="config.treasury">
-            <ExplorerLink :href="suiExplorerUrl('account', config.treasury, NETWORK)" :value="config.treasury" />
+            <ExplorerLink :href="suiExplorerUrl('account', config.treasury, explorerNetwork)" :value="config.treasury" />
           </CopyableAddress>
           <span v-else class="dao-mono dao-mono--sm">—</span>
         </UiStatRow>

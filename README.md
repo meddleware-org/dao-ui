@@ -43,17 +43,16 @@ operator. `commission_bps` is read live from `PlatformConfig`; the on-chain hard
 
 ## Configure (build-time `VITE_*`)
 
-All values have working testnet defaults; override per network for mainnet.
+The `access_gate` ids are not configuration: they come from `@meddleware/access-gate-client/deployments`
+for the active network.
 
 | Var | Meaning |
 | --- | --- |
-| `VITE_NETWORK` | `testnet` (default) or `mainnet` |
-| `VITE_RPC_TESTNET` / `VITE_RPC_MAINNET` | Sui RPC URL override |
-| `VITE_ACCESS_GATE_PACKAGE_ID_{NET}` | Published `access_gate` package id (governs which events/objects are queried) |
-| `VITE_PLATFORM_CONFIG_ID_{NET}` | `PlatformConfig` shared-object id (commission + treasury) |
+| `VITE_NETWORK` | Network the standalone build selects: `testnet` (default) or `mainnet`. Embedded, the host's selector rules. |
+| `VITE_INDEXER_URL` | Optional read-indexer (display data; falls back to the full node) |
 
-Mainnet package/config ids are empty until deployment; set them via the `_MAINNET` vars — no code
-change required.
+On a network without a recorded deployment (mainnet before launch) the views show an error instead
+of querying.
 
 ## Develop
 

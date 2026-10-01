@@ -24,6 +24,13 @@ one-line route change once DAO participation ships. Keep this package working an
 - **On-chain truth, thin app.** No accounting or policy logic lives here. Commission math, the
   commission cap, and gate lifecycle are enforced by the `access_gate` Move package; this app only
   reads and renders. Do not move financial truth into the frontend.
+- **Chain reads go through `@meddleware/access-gate-client`.** The composables are thin wrappers:
+  exact types at the package's original id, paged owned-object reads, BCS-decoded events (a
+  consume's address is its `consumer`). Do not parse objects or events here.
+- **One network source, one id source.** The network is wallet-adapter's shared `useNetwork()`
+  selector (the standalone `main.ts` selects `VITE_NETWORK`). The ids come from
+  `@meddleware/access-gate-client/deployments` for that network — never env, never literals. With
+  no deployment for the network, composables report an error rather than querying.
 - **Gate discovery is `AdminCap`-based, not event-based.** `useGates.ts` reads the treasury from
   `PlatformConfig`, lists `access_gate::AdminCap` objects it owns, and resolves each `Gate` by
   `AdminCap.gate_id`. This is intentional: testnet prunes the one-time `GateCreatedEvent` after
@@ -48,7 +55,7 @@ one-line route change once DAO participation ships. Keep this package working an
 
 | File | Purpose |
 | --- | --- |
-| `src/config.ts` | Build-time env: network, RPC, `access_gate` package id, `PlatformConfig` id. Derives `PACKAGE_ID` / `CONFIG_ID` / `RPC_URL` for the active network. |
+| `src/config.ts` | The active `network` (wallet-adapter selector), `explorerNetwork`, `requireDeployment()` (ids from access-gate-client `deployments`), optional `INDEXER_URL`. |
 | `src/wallet.ts` | Shim over `@meddleware/wallet-adapter`; exposes `getSuiClient()` (bare reads) + `useWallet()` (sign-only, `sui:signPersonalMessage`). |
 | `src/DaoView.vue` | Core tool UI — `UiToolbar`, `AppTabNav` + `UiTabPanel`, and `UiStatusBar` (network/epoch/refresh). Imports `styles/qt.css` itself so it works when consumed as a library. Exported from `src/index.ts`. |
 | `src/index.ts` | Library entry — exports `DaoView`. |
@@ -77,7 +84,7 @@ needs dao-ui's global CSS. Keep `App.vue` a thin shell; keep tool UI in `DaoView
   ownership (`useGates.ts`).
 - Do not add accounting/commission logic here; it is on-chain in `access_gate`.
 - Do not require a wallet for reads. Reads use a bare `SuiClient`.
-- Do not hardcode network ids; read `import.meta.env.VITE_*` via `src/config.ts`.
+- Do not hardcode or env-configure package/object ids; take them from `requireDeployment()`.
 - Do not restyle via a global stylesheet in the library path; `DaoView` carries scoped `qt.css`.
 
 ## Roadmap — `vault_dao`
@@ -99,9 +106,8 @@ wiring the real module in is a composable-body swap, not a UI rewrite.
 - **Embed `DaoView` in a host app:** `import { DaoView } from '@meddleware/dao-ui'`; provide the
   shared `@meddleware/wallet-adapter` context; note that `DaoView` self-imports `qt.css`. Document the
   peer expectation on `@meddleware/ui` + `@meddleware/design-tokens` for full theming.
-- **Point at your own deployment:** enumerate every `VITE_*` (network, RPC, `access_gate` package id,
-  `PlatformConfig` id) and how to source `PlatformConfig`/`AdminCap`/`Gate` ids after deploying the
-  `access_gate` package.
+- **Point at your own deployment:** ids come from `@meddleware/access-gate-client/deployments`;
+  `VITE_NETWORK` and `VITE_INDEXER_URL` are the only chain-related build vars.
 - **Composable API reference:** `usePlatformConfig`, `useTreasury`, `useGates`, `useDaoEvents`,
   `useEpoch`, `useProposals` — return shapes + the on-chain objects/events each reads. This is a good
   TypeDoc target once the composables are exported from `src/index.ts`.
@@ -111,7 +117,7 @@ wiring the real module in is a composable-body swap, not a UI rewrite.
 ### White-label operator path (to write later)
 
 - Fork/deploy the console against a **different `PlatformConfig` + treasury** so an operator sees
-  *their* treasury, commission, and gates. Document which `VITE_*` to change and the branding seams
+  *their* treasury, commission, and gates. Document how the deployment is selected and the branding seams
   (`@meddleware/design-tokens` overrides, `AppHeader` brand slot, network badge).
 - Clarify what is fixed by the shared `access_gate` package (commission cap, gate lifecycle) vs.
   what a white-label operator controls (their treasury, commission within the cap, gate set).
