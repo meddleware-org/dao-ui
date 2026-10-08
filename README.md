@@ -30,7 +30,8 @@ Gates are discovered by **`AdminCap` ownership**, not by events:
 3. Fetch each `Gate` shared object referenced by its `AdminCap.gate_id`.
 
 This is deliberately **resilient to event pruning** — testnet fullnodes prune old events (including
-the one-time `GateCreatedEvent`) after ~3 months, so event-based gate counting is unreliable. The
+the one-time `GateCreatedEvent`) within days (about 5½ days when measured on 2026-10-08), so event-based
+gate counting is unreliable. The
 `AdminCap`→`Gate` path always reflects live on-chain reality. See
 [`src/composables/useGates.ts`](src/composables/useGates.ts).
 

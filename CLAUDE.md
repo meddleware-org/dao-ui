@@ -39,8 +39,8 @@ one-line route change once DAO participation ships. Keep this package working an
   no deployment for the network, composables report an error rather than querying.
 - **Gate discovery is `AdminCap`-based, not event-based.** `useGates.ts` reads the treasury from
   `PlatformConfig`, lists `access_gate::AdminCap` objects it owns, and resolves each `Gate` by
-  `AdminCap.gate_id`. This is intentional: testnet prunes the one-time `GateCreatedEvent` after
-  ~3 months, so event-based discovery under-counts. Do **not** revert to counting `GateCreatedEvent`.
+  `AdminCap.gate_id`. This is intentional: public testnet nodes prune the one-time `GateCreatedEvent`
+  within days (about 5½ when measured on 2026-10-08), so event-based discovery under-counts. Do **not** revert to counting `GateCreatedEvent`.
 - **Events tolerate pruning + partial failure.** `useDaoEvents.ts` queries each event type with
   `Promise.allSettled`, merges, and globally sorts by checkpoint descending. A pruned or failing
   event type degrades gracefully rather than erroring the whole feed. Only the still-indexed
