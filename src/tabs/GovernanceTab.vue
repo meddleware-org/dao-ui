@@ -57,8 +57,8 @@ watch(
         <UiStatRow label="Commission rate">{{ commissionPct }}</UiStatRow>
         <UiStatRow label="Max commission cap">10.00% (1000 bps — on-chain hard cap)</UiStatRow>
         <UiStatRow label="Treasury address" align="left">
-          <CopyableAddress v-if="config?.treasury" :address="config.treasury">
-            <ExplorerLink :href="suiExplorerUrl('account', config.treasury, explorerNetwork)" :value="config.treasury" />
+          <CopyableAddress v-if="config?.treasury" :address="config.treasury" :truncate="false">
+            <ExplorerLink :href="suiExplorerUrl('account', config.treasury, explorerNetwork)" :value="config.treasury" :truncate="false" />
           </CopyableAddress>
           <span v-else class="dao-mono dao-mono--sm">—</span>
         </UiStatRow>
