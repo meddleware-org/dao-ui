@@ -38,8 +38,9 @@ gate counting is unreliable. The
 ## Commission model
 
 Commission is charged on every NFT access purchase and enforced on-chain by the `access_gate`
-package: `commission_bps / 10000 × price` routes to the treasury; the remainder goes to the gate
-operator. `commission_bps` is read live from `PlatformConfig`; the on-chain hard cap is 1000 bps
+package: every paid purchase pays `max(price × commission_bps / 10000, min_commission_mist)` to the
+treasury, never more than 10% of the price; the remainder goes to the gate operator (a gate that locked its
+terms at freeze keeps them). `commission_bps` and `min_commission_mist` are read live from `PlatformConfig`; the on-chain hard cap is 1000 bps
 (10%).
 
 ## Configure (build-time `VITE_*`)

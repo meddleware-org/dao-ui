@@ -9,6 +9,8 @@ import { latest, onChainContext } from './chainContext.js'
 export interface PlatformConfig {
   treasury: string
   commissionBps: number
+  /** Floor on a paid purchase's commission, in MIST (the contract pays max(percentage, this), capped at 10%). */
+  minCommissionMist: bigint
 }
 
 export function usePlatformConfig() {
@@ -25,7 +27,7 @@ export function usePlatformConfig() {
       const d = requireDeployment()
       const c = await fetchPlatformConfig(getSuiClient(), d.platformConfigId, d.originalId)
       if (!current()) return
-      config.value = { treasury: c.treasury, commissionBps: Number(c.commissionBps) }
+      config.value = { treasury: c.treasury, commissionBps: Number(c.commissionBps), minCommissionMist: c.minCommissionMist }
     } catch (e) {
       if (!current()) return
       config.value = null

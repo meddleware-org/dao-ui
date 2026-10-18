@@ -20,6 +20,13 @@ const commissionPct = computed(() =>
   config.value ? (config.value.commissionBps / 100).toFixed(2) + '%' : '—',
 )
 
+// Display only: the exact figure in MIST is shown beside it, and the contract enforces the rule.
+const minCommission = computed(() => {
+  if (!config.value) return '—'
+  const mist = config.value.minCommissionMist
+  return `${mist.toString()} MIST (${(Number(mist) / 1e9).toString()} SUI)`
+})
+
 type CapState = 'idle' | 'checking' | 'found' | 'not-found' | 'error'
 const capState = ref<CapState>('idle')
 
@@ -55,6 +62,7 @@ watch(
     <UiPanel title="Platform Parameters">
       <UiStatGrid class="dao-stat-grid">
         <UiStatRow label="Commission rate">{{ commissionPct }}</UiStatRow>
+        <UiStatRow label="Minimum commission">{{ minCommission }}</UiStatRow>
         <UiStatRow label="Max commission cap">10.00% (1000 bps — on-chain hard cap)</UiStatRow>
         <UiStatRow label="Treasury address" align="left">
           <CopyableAddress v-if="config?.treasury" :address="config.treasury" :truncate="false">
@@ -66,9 +74,10 @@ watch(
 
       <p class="dao-muted gov__footnote">
         Parameters are governed by <code>PlatformAdminCap</code> on-chain.
-        Commission is charged on every NFT access purchase:
-        <code>commission_bps / 10000 × price</code> routes to treasury;
-        the remainder goes to the gate operator.
+        Commission is charged on every paid NFT access purchase:
+        <code>max(price × commission_bps / 10000, minimum commission)</code>, never more than
+        10% of the price, routes to treasury; the remainder goes to the gate operator. A gate that
+        locked its commission terms when it was frozen keeps those terms.
       </p>
     </UiPanel>
 
@@ -100,7 +109,7 @@ watch(
         <p class="dao-muted">
           <span aria-hidden="true">●</span>
           Connected: {{ account.address.slice(0, 10) }}…{{ account.address.slice(-6) }}<br />
-          This wallet does not hold <code>PlatformAdminCap</code> or <code>DaoAdminCap</code>.
+          This wallet does not hold <code>PlatformAdminCap</code>.
           Privileged actions are not available.
         </p>
       </template>

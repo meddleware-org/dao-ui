@@ -1,0 +1,36 @@
+# Changelog
+
+All notable changes to `@meddleware/dao-ui` are documented here.
+Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows
+[Semantic Versioning](https://semver.org/). Before 0.2.0, breaking changes ship as patch releases.
+Releases before 0.1.34 are recorded in the git history only.
+
+## [0.1.34] - 2026-10-18
+
+### Added
+
+- `LICENSE` (0BSD, as the package declares; audit F13).
+- `tests/design-tokens-used.test.ts`: no component or stylesheet draws `--warning` as a text colour, and every
+  custom property the app reads is defined by design-tokens (audit F12, F20).
+- `tests/governance-tab.test.ts`: the Governance tab states the contract's commission rule, shows the live
+  minimum commission, and names only `PlatformAdminCap` (audit F14).
+
+### Changed
+
+- Governance tab: the commission footnote now reads `max(price x commission_bps / 10000, minimum commission)`,
+  never more than 10% of the price (as `access_gate` pays it), a *Minimum commission* row shows
+  `min_commission_mist` from `PlatformConfig`, and the "no cap" message names `PlatformAdminCap` only (the one
+  capability the check tests). `usePlatformConfig` also returns `minCommissionMist` (audit F14). README and
+  CLAUDE.md describe the same rule.
+- Dependencies: `@meddleware/access-gate-client` ^0.0.9, `@meddleware/design-tokens` ^0.1.10.
+- Image base: static-server 0.1.8 (`sha256:e32cf42b...4000`).
+- `npm-publish.yml` `verify` calls `node-ci.yml`, so the package is released only if the full CI set passes
+  (type-check, linters, tests, build, licences), as the image release does (audit F11, F16).
+
+### Fixed
+
+- `App.vue` read the undefined `--font-mono`; it now uses `--mw-font-mono` (audit F20).
+
+### Removed
+
+- The unused `.dao-notice` rule in `qt.css`, which drew `--warning` as text (audit F12).

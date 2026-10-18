@@ -105,7 +105,7 @@ describe('usePlatformConfig', () => {
     const { config, reload } = usePlatformConfig()
     await reload()
     expect(getObject).toHaveBeenCalledWith({ objectId: CFG, include: { json: true } })
-    expect(config.value).toEqual({ treasury: TREASURY, commissionBps: 20 })
+    expect(config.value).toEqual({ treasury: TREASURY, commissionBps: 20, minCommissionMist: 1_000_000n })
   })
 
   it('refuses an object that is not this package\'s PlatformConfig', async () => {

@@ -69,7 +69,7 @@ one-line route change once DAO participation ships. Keep this package working an
 | `src/index.ts` | Library entry — exports `DaoView`. |
 | `src/App.vue` | Standalone shell only: `AppHeader` (+ network badge, `ColorModeControl`) + `<DaoView>` + `AppFooter`. |
 | `src/main.ts` | Standalone bootstrap — imports design-tokens + ui base CSS + `qt.css`, mounts `App`. |
-| `src/composables/usePlatformConfig.ts` | Reads `PlatformConfig` → `{ treasury, commissionBps }`. |
+| `src/composables/usePlatformConfig.ts` | Reads `PlatformConfig` → `{ treasury, commissionBps, minCommissionMist }`. |
 | `src/composables/useTreasury.ts` | Reads the treasury's SUI balance, reactive to the address getter. |
 | `src/composables/useGates.ts` | `AdminCap`-ownership gate discovery (pruning-resistant). |
 | `src/composables/useDaoEvents.ts` | Merged, checkpoint-sorted access-gate event feed. |

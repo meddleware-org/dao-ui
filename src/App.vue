@@ -50,7 +50,7 @@ const DEV_URL  = import.meta.env.VITE_DEV_URL  || 'https://dev.meddleware.co.uk/
   border-radius: 2px;
   border: 1px solid var(--border);
   color: var(--muted);
-  font-family: var(--font-mono);
+  font-family: var(--mw-font-mono);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
