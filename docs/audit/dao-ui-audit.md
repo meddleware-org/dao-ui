@@ -22,7 +22,7 @@
 **Review date:** 2026-09-18 (first pass) · re-verified 2026-10-03 · re-verified 2026-10-09 · fixes 2026-10-18
 **Reviewer:** Internal review
 **Severity ceiling:** Low — read-only: nothing is signed; a wallet is used only to detect a `PlatformAdminCap`.
-**Status:** re-verified 2026-10-09; F11–F14, F16 and F20 fixed in 0.1.34 (2026-10-18, commit pending)
+**Status:** re-verified 2026-10-09; F11–F14, F16 and F20 fixed in 0.1.34 (2026-10-18, commit `7857e2e`)
 
 ---
 
@@ -59,7 +59,7 @@ kept current because the package and image still publish. F1 to F8 hold. Since t
   cosign identity pins the repository not the workflow (ACCEPTED-RISK), **F18** registry mirror and
   credential inventory (DEFERRED, maintainer).
 
-Fix wave 2026-10-18 (0.1.34, local commit pending): **F11 RESOLVED** (the unit tests run in
+Fix wave 2026-10-18 (0.1.34, local commit `7857e2e`): **F11 RESOLVED** (the unit tests run in
 `node-ci.yml` since `4155034`; the npm job's `verify` now calls that workflow), **F12 RESOLVED** (the
 unused rule is deleted; `design-tokens-used.test.ts` pins it), **F13 RESOLVED** (`LICENSE` added),
 **F14 RESOLVED** (the Governance tab states the contract's rule, shows the live minimum commission and
@@ -207,7 +207,7 @@ re-verified because `verify-digests.sh` covers deployed images only.
 
 ### F11 — Unit tests are not run by CI or by the release gate
 
-**Severity:** Low   **Disposition:** RESOLVED (0.1.34 for the npm gate; the CI step landed in `4155034`, commit pending for this release)
+**Severity:** Low   **Disposition:** RESOLVED (0.1.34 for the npm gate; the CI step landed in `4155034`, commit `7857e2e` for this release)
 **Where:** `.github/workflows/node-ci.yml`; `docker-publish.yml` and `npm-publish.yml` `verify`
 **Issue:** as found 2026-10-09, `node-ci.yml` had no `npm test` step, so the image release (which calls
 it since `d67c5e5`) ran no unit tests; only the npm job's own `verify` did. TS lens: every test project
@@ -221,7 +221,7 @@ same full set. The suite is 38 tests in 4 files (2026-10-18).
 
 ### F12 — `--warning` drawn as text in an unused rule
 
-**Severity:** Info   **Disposition:** RESOLVED (0.1.34, commit pending; `tests/design-tokens-used.test.ts`)
+**Severity:** Info   **Disposition:** RESOLVED (0.1.34, commit `7857e2e`; `tests/design-tokens-used.test.ts`)
 **Where:** `src/styles/qt.css` (`.dao-notice { border/color: var(--warning); background: color-mix(… var(--warning) 10% …) }`, removed)
 **Issue:** `--warning` is the bright yellow fill (2.0:1 on the light canvas). The rule drew it as text
 (design-tokens audit F2, F10; treasury-ui had the same rule). No component used `.dao-notice`, so the
@@ -235,7 +235,7 @@ still not checked per theme and season.
 
 ### F13 — No `LICENSE` file although the package declares 0BSD
 
-**Severity:** Info   **Disposition:** RESOLVED (0.1.34, commit pending; `LICENSE`)
+**Severity:** Info   **Disposition:** RESOLVED (0.1.34, commit `7857e2e`; `LICENSE`)
 **Where:** repository root; `package.json` (`"license": "0BSD"`); `npm pack --dry-run`
 **Issue:** the repository had no `LICENSE` file, so the published tarball carried only the SPDX id.
 **Impact:** documentation and tooling only: licence scanners and consumers read the file; 0BSD asks for
@@ -245,7 +245,7 @@ no attribution, and the image serves the bundled dependencies' notices (F10).
 
 ### F14 — The Governance tab misstates the commission rule and the capability check
 
-**Severity:** Low   **Disposition:** RESOLVED (0.1.34, commit pending; `tests/governance-tab.test.ts`)
+**Severity:** Low   **Disposition:** RESOLVED (0.1.34, commit `7857e2e`; `tests/governance-tab.test.ts`)
 **Where:** `src/tabs/GovernanceTab.vue` (footnote in *Platform Parameters*; the "not-found" message in *Admin Actions*); `README.md`; `src/composables/usePlatformConfig.ts`
 **Issue:** (1) the footnote said commission is `commission_bps / 10000 × price`. The contract pays
 `max(price × commission_bps / 10000, min_commission_mist)`, never more than 10% of the price
@@ -280,7 +280,7 @@ hosts are fixed. The policy is the same string treasury-ui serves, whose live he
 
 ### F16 — The npm publish gate is a subset of CI
 
-**Severity:** Low   **Disposition:** RESOLVED (0.1.34, commit pending; was ACCEPTED-RISK)
+**Severity:** Low   **Disposition:** RESOLVED (0.1.34, commit `7857e2e`; was ACCEPTED-RISK)
 **Where:** `.github/workflows/npm-publish.yml`
 **Issue:** (as found 2026-10-09) the npm job's `verify` ran `npm ci`, the audit gate, type-check and the unit tests, not the
 full CI workflow (linters, licence check). The image release (F10) does run the full workflow on the
@@ -335,7 +335,7 @@ run `bootstrap/images/refresh-digests.sh` then `sync-manifests.sh`, which replac
 
 ### F20 — `App.vue` read an undefined custom property
 
-**Severity:** Info   **Disposition:** RESOLVED (0.1.34, commit pending; `tests/design-tokens-used.test.ts`)
+**Severity:** Info   **Disposition:** RESOLVED (0.1.34, commit `7857e2e`; `tests/design-tokens-used.test.ts`)
 **Where:** `src/App.vue` (the network badge's `font-family: var(--font-mono)`)
 **Issue:** design-tokens defines `--mw-font-mono`, not `--font-mono`; the undefined name made the badge
 fall back to the inherited font. Found by the new token test (it checks that every custom property the
@@ -512,9 +512,9 @@ in `node-ci.yml`, which both release workflows call (F11).
 - [x] `SECURITY.md` present; F7, F8 fixed
 - [x] image (built, not deployed): digest-pinned bases, non-root, signed with SBOM and provenance, scanned before signing (F10)
 - [x] consumed IDs are the latest on-chain version — access-gate-client 0.0.8 deployments (B.SC-1)
-- [x] every test project runs in CI — F11: `node-ci.yml` runs `npm test` (`4155034`); `npm-publish.yml` `verify` calls it (0.1.34, commit pending)
-- [x] commission explanation and capability message match the contract and the check — F14: 0.1.34 (commit pending), `governance-tab.test.ts`
-- [x] colour: no warning text below AA on the light theme — F12: rule deleted, `design-tokens-used.test.ts` (0.1.34, commit pending)
+- [x] every test project runs in CI — F11: `node-ci.yml` runs `npm test` (`4155034`); `npm-publish.yml` `verify` calls it (0.1.34, commit `7857e2e`)
+- [x] commission explanation and capability message match the contract and the check — F14: 0.1.34 (commit `7857e2e`), `governance-tab.test.ts`
+- [x] colour: no warning text below AA on the light theme — F12: rule deleted, `design-tokens-used.test.ts` (0.1.34, commit `7857e2e`)
 
 ### pre-mainnet
 
@@ -598,7 +598,7 @@ in `node-ci.yml`, which both release workflows call (F11).
   updated. Counts: 19 findings — 5 RESOLVED (F6–F10), 4 Positive (F1, F2, F3, F5), 1 ADJUDICATED (F4),
   3 ACCEPTED-RISK (F15–F17), 6 DEFERRED (F11–F14 next patch; F18 maintainer; F19 re-enable gate);
   tests 13/13, `vue-tsc`, three linters and the audit gate green.
-- 2026-10-18 — fix wave (0.1.34, local commit pending): access-gate-client ^0.0.9 (deployments
+- 2026-10-18 — fix wave (0.1.34, local commit `7857e2e`): access-gate-client ^0.0.9 (deployments
   unchanged), design-tokens ^0.1.10, static-server 0.1.8 (`sha256:e32cf42b…4000`, verified on the quay.io
   API); every first-party dependency is at its `npm view` latest. F11 RESOLVED (tests in `node-ci.yml`
   since `4155034`; `npm-publish.yml` `verify` calls it), F12 RESOLVED (unused `.dao-notice` rule deleted,
