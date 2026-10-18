@@ -13,16 +13,16 @@
 **Hosting:** none while retired; the image is built to serve on static-server (CSP and HSTS from the server); no static-host `_headers` file
 **Embedding hosts:** the dashboard — the `DaoView` route is commented out (`dashboard/src/router/index.ts`) though `@meddleware/dao-ui ^0.1.32` stays a dependency
 **VITE_\* inventory:** `VITE_NETWORK` (testnet|mainnet, baked, selects the network only), `VITE_INDEXER_URL` (optional read-indexer base URL, baked, display data), `VITE_DOCS_URL` / `VITE_DEV_URL` (footer links, baked); all public, none selects an on-chain id; all four are in `.env.example`
-**Images:** `quay.io/meddleware-org/dao-ui:0.1.33@sha256:07656932…c685` (published on the 0.1.33 tag, read from the quay.io API 2026-10-09; not deployed, so outside `verify-digests.sh`); last deployed `0.1.20@sha256:574a519a…3605` (still pinned in the parked overlay)
-**Base images:** build `node:24-slim@sha256:0e0ff40c…f9b6`; runtime `quay.io/meddleware-org/static-server:0.1.8@sha256:e32cf42b…4000` (0.1.7 until 0.1.33; tag read from the quay.io API 2026-10-18)
+**Images:** `quay.io/meddleware-org/dao-ui:0.1.34@sha256:ca085d6f5421df3268c7736257d190a00bbd136db1e14a6e24f84dd1f729bead` (published 2026-10-18 on the `v0.1.34` tag, commit `3edca2a`; cosign keyless signature verified 2026-10-18 against the workflow-anchored identity; **not deployed**, so outside the deployed-image set of `verify-digests.sh`); superseded 0.1.33 was `sha256:07656932…c685` (published 2026-10-09); last deployed `0.1.20@sha256:574a519a…3605` (still pinned in the parked overlay)
+**Base images:** build `node:24-slim@sha256:0e0ff40c…f9b6`; runtime `quay.io/meddleware-org/static-server:0.1.8@sha256:e32cf42b…4000` (0.1.7 until 0.1.33; 0.1.34 published on it; tag read from the quay.io API 2026-10-18)
 **Runtime user:** `USER 65534:65534`   **Runtime FS:** read-only root in the parked manifest, no writable mounts
 **Deployed by:** nothing — parked at `post-bootstrap/_retired/dao-ui/overlays/default`; not in `config/images.yaml`; `sui-dao.meddleware.co.uk` is gone (no response 2026-10-09)
 **Build args:** `VITE_NETWORK`, `VITE_INDEXER_URL` and `CSP` — none secret, none a test switch
-**Deployment status:** npm v0.1.33 published (2026-10-09); 0.1.34 prepared locally (2026-10-18), not yet released. **Retired from hosting** since 2026-09-28 — `post-bootstrap/_retired/dao-ui`, torn down, not in `config/images.yaml`, dashboard route commented out (until governance is usable); the image still builds and is signed on tags.
-**Review date:** 2026-09-18 (first pass) · re-verified 2026-10-03 · re-verified 2026-10-09 · fixes 2026-10-18
+**Deployment status:** npm v0.1.34 published (2026-10-18; v0.1.33 on 2026-10-09) and the 0.1.34 image published and signature-verified (2026-10-18, `sha256:ca085d6f…bead`; release tag `v0.1.34` = `3edca2a`) — **published, not deployed**. **Retired from hosting** since 2026-09-28 — `post-bootstrap/_retired/dao-ui`, torn down, not in `config/images.yaml`, dashboard route commented out (until governance is usable); the image still builds and is signed on tags.
+**Review date:** 2026-09-18 (first pass) · re-verified 2026-10-03 · re-verified 2026-10-09 · fixes 2026-10-18 (0.1.34, published, not deployed)
 **Reviewer:** Internal review
 **Severity ceiling:** Low — read-only: nothing is signed; a wallet is used only to detect a `PlatformAdminCap`.
-**Status:** re-verified 2026-10-09; F11–F14, F16 and F20 fixed in 0.1.34 (2026-10-18, commit `7857e2e`)
+**Status:** re-verified 2026-10-09; F11–F14, F16 and F20 fixed in 0.1.34 (2026-10-18, commit `7857e2e`); 0.1.34 published (npm and image, signature verified) 2026-10-18 and not deployed (retired)
 
 ---
 
@@ -59,7 +59,7 @@ kept current because the package and image still publish. F1 to F8 hold. Since t
   cosign identity pins the repository not the workflow (ACCEPTED-RISK), **F18** registry mirror and
   credential inventory (DEFERRED, maintainer).
 
-Fix wave 2026-10-18 (0.1.34, local commit `7857e2e`): **F11 RESOLVED** (the unit tests run in
+Fix wave 2026-10-18 (0.1.34, commit `7857e2e`; published 2026-10-18, not deployed): **F11 RESOLVED** (the unit tests run in
 `node-ci.yml` since `4155034`; the npm job's `verify` now calls that workflow), **F12 RESOLVED** (the
 unused rule is deleted; `design-tokens-used.test.ts` pins it), **F13 RESOLVED** (`LICENSE` added),
 **F14 RESOLVED** (the Governance tab states the contract's rule, shows the live minimum commission and
@@ -202,8 +202,8 @@ on the public path (the workflow is identical to treasury-ui's apart from the im
 Dockerfile runs `npm run licenses` in the build stage and copies `package-lock.json` to
 `/usr/share/doc/dao-ui/`; CI runs `check:licenses`; the runtime base is static-server 0.1.7 (Go 1.26.9; 0.1.8 from 0.1.34)
 with an explicit `USER 65534:65534`; the 0.1.33 tag exists on quay.io (read 2026-10-09). Not run: a
-Trivy *config* scan of the Dockerfile and manifests; the signature of the 0.1.33 image was not
-re-verified because `verify-digests.sh` covers deployed images only.
+Trivy *config* scan of the Dockerfile and manifests. The signature of the 0.1.33 image was not
+re-verified because `verify-digests.sh` covers deployed images only; the 0.1.34 image (`sha256:ca085d6f…bead`) was published and its cosign signature verified against the workflow-anchored identity on 2026-10-18.
 
 ### F11 — Unit tests are not run by CI or by the release gate
 
@@ -610,3 +610,4 @@ in `node-ci.yml`, which both release workflows call (F11).
   (F6–F14, F16, F20), 4 Positive (F1, F2, F3, F5), 1 ADJUDICATED (F4), 2 ACCEPTED-RISK (F15, F17),
   2 DEFERRED (F18 maintainer; F19 re-enable gate); tests 38/38, type-check, `lint:css/js/html`,
   build, `check:licenses` and the audit gate green.
+- 2026-10-18 — published, not deployed (`v0.1.34` = `3edca2a`, npm 0.1.34 and image `0.1.34@sha256:ca085d6f5421df3268c7736257d190a00bbd136db1e14a6e24f84dd1f729bead`). Cosign keyless signature verified against the workflow-anchored identity; the app stays retired from the cluster (parked under `post-bootstrap/_retired/dao-ui`, not in `config/images.yaml`, no rollout), so there is no live check and no live header read. F19 (re-enable edit) and F18 (maintainer) unchanged; re-enabling stays gated on governance being usable.
