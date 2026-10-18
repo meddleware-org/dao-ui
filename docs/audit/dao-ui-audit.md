@@ -300,8 +300,13 @@ on the `NPM_PUBLISH` variable.
 **Issue:** the cluster check accepts any workflow identity of `github.com/meddleware-org/dao-ui`.
 **Impact:** a workflow added by someone with write access could sign an image the check would accept;
 moot while the image is not deployed and therefore not checked.
-**Remediation / evidence:** the repository is the signing boundary; anchoring to
-`docker-publish.yml@refs/tags/v*` is a `COSIGN_IDENTITY_REGEXP` override in the workspace script.
+**Remediation / evidence:** the repository is the signing boundary. The workspace script's default identity became
+workflow-anchored on 2026-10-18 (`^https://github\.com/meddleware-org/${name}/\.github/workflows/docker-publish\.yml@refs/tags/v`;
+all 16 deployed and contingency images verified valid against it), but `dao-ui` is parked under `post-bootstrap/_retired/`
+and is not in `config/images.yaml`, so `verify-digests.sh` does not check this image and the disposition is unchanged.
+The new default applies automatically to the `dao-ui` entry when the app is re-enabled and added to `config/images.yaml`
+(F19); the 0.1.34 image's signature was verified by hand against the workflow-anchored identity on 2026-10-18.
+Close this finding when the first cluster check of a re-enabled `dao-ui` passes against the default.
 
 ### F18 — Self-hosted registry mirror and registry credentials
 
@@ -611,3 +616,4 @@ in `node-ci.yml`, which both release workflows call (F11).
   2 DEFERRED (F18 maintainer; F19 re-enable gate); tests 38/38, type-check, `lint:css/js/html`,
   build, `check:licenses` and the audit gate green.
 - 2026-10-18 — published, not deployed (`v0.1.34` = `3edca2a`, npm 0.1.34 and image `0.1.34@sha256:ca085d6f5421df3268c7736257d190a00bbd136db1e14a6e24f84dd1f729bead`). Cosign keyless signature verified against the workflow-anchored identity; the app stays retired from the cluster (parked under `post-bootstrap/_retired/dao-ui`, not in `config/images.yaml`, no rollout), so there is no live check and no live header read. F19 (re-enable edit) and F18 (maintainer) unchanged; re-enabling stays gated on governance being usable.
+- 2026-10-18 — cosign identity (F17) stays ACCEPTED-RISK: the default identity in `bootstrap/images/verify-digests.sh` is now workflow-anchored (`^https://github\.com/meddleware-org/${name}/\.github/workflows/docker-publish\.yml@refs/tags/v`; 16/16 deployed and contingency images valid), but this image is not in `config/images.yaml` (retired), so the script does not verify it; the finding closes with the first cluster check after re-enable (F19). Counts unchanged.
