@@ -81,7 +81,7 @@ one-line route change once DAO participation ships. Keep this package working an
 
 ## Dual app + library
 
-Like `seal-ui`, this package is **both** a standalone SPA (`App.vue` + `main.ts`, `vite build`) and a
+Like `sealed-storage-ui`, this package is **both** a standalone SPA (`App.vue` + `main.ts`, `vite build`) and a
 library (`src/index.ts` exports `DaoView`, resolved via `"exports"`). The dashboard imports `DaoView`
 and wraps it in its own shell + shared wallet. `DaoView` imports its own `qt.css`, so no consumer
 needs dao-ui's global CSS. Keep `App.vue` a thin shell; keep tool UI in `DaoView.vue` and its tabs.
