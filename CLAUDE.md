@@ -105,7 +105,7 @@ wiring the real module in is a composable-body swap, not a UI rewrite.
 
 ## Deferred documentation — NOT for the `docs.` website (planned here per Part 0.4)
 
-> The following is captured for the future **`dev.meddleware.co.uk`** developer subdomain and the
+> The following is captured for the future **`meddleware.dev`** developer subdomain and the
 > **white-label** offering. It is deliberately **excluded from the user-facing `docs.` site**, but
 > planned here so the later build is transcription, not rediscovery.
 
