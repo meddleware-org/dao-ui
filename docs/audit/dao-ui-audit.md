@@ -404,7 +404,7 @@ for every `.vue` and `.css` file under `src/`.
 | `@mysten/sui` | `^2.33.2` (installed 2.35.0) | reads | `npm audit` gate 2026-10-09: only the allowlisted advisory | one copy (`npm ls`); ADR-0001 baseline `^2.33.1` |
 | Vue / Vite / TypeScript / vitest | 3.5.43 / 8.3 / 6.0.3 / 5.0.3 (plugin-vue 6.0.9, vue-tsc 3.3.x) | build | clean | TypeScript 7 and vitest 5-major follow-ups declined (decision); Node 24 LTS |
 | Sui full node | public gRPC (wallet-adapter) | every panel | Mysten | fails closed (each panel shows its error) |
-| Read-indexer (`sui-indexer.meddleware.co.uk`) | https, optional `VITE_INDEXER_URL` | event feed | own audit | display data; falls back to the full node after 3 s |
+| Read-indexer (`sui-indexer.meddleware.dev`; `.co.uk` until 2026-10-27) | https, optional `VITE_INDEXER_URL` | event feed | own audit | display data; falls back to the full node after 3 s |
 | `static-server` / `node:24-slim` | 0.1.8 / digest-pinned | runtime / build | Trivy at release (F10); Go 1.26.9 | — |
 | dev tooling | lockfile | no | GHSA-vfj7-8cjw-p6xm allowlisted to 2027-01-01 | TS lens B.TS-3 |
 
