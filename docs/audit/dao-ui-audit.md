@@ -19,7 +19,7 @@
 **Deployed by:** nothing — parked at `post-bootstrap/_retired/dao-ui/overlays/default`; not in `config/images.yaml`; `sui-dao.meddleware.co.uk` is gone (no response 2026-10-09)
 **Build args:** `VITE_NETWORK`, `VITE_INDEXER_URL` and `CSP` — none secret, none a test switch
 **Deployment status:** npm v0.1.34 published (2026-10-18; v0.1.33 on 2026-10-09) and the 0.1.34 image published and signature-verified (2026-10-18, `sha256:ca085d6f…bead`; release tag `v0.1.34` = `3edca2a`) — **published, not deployed**. **Retired from hosting** since 2026-09-28 — `post-bootstrap/_retired/dao-ui`, torn down, not in `config/images.yaml`, dashboard route commented out (until governance is usable); the image still builds and is signed on tags.
-**Review date:** 2026-09-18 (first pass) · re-verified 2026-10-03 · re-verified 2026-10-09 · fixes 2026-10-18 (0.1.34, published, not deployed); 0.1.38 re-verified 2026-10-30 (Point the developer-docs and indexer links at the machine zone (ADR-0005); current @meddleware packages)
+**Review date:** 2026-09-18 (first pass) · re-verified 2026-10-03 · re-verified 2026-10-09 · fixes 2026-10-18 (0.1.34, published, not deployed); 0.1.38 re-verified 2026-10-30 (Point the developer-docs and indexer links at the machine zone (ADR-0005); current @meddleware packages); 0.1.39 re-verified 2026-10-30 (Dependency updates (minor and patch groups) and workflow action bumps)
 **Reviewer:** Internal review
 **Severity ceiling:** Low — read-only: nothing is signed; a wallet is used only to detect a `PlatformAdminCap`.
 **Status:** re-verified 2026-10-09; F11–F14, F16 and F20 fixed in 0.1.34 (2026-10-18, commit `7857e2e`); 0.1.34 published (npm and image, signature verified) 2026-10-18 and not deployed (retired)
