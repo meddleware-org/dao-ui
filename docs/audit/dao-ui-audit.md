@@ -3,7 +3,7 @@
 **Classification:** Internal security review
 **Project:** `repos/dao-ui` — `@meddleware/dao-ui`, Vue 3 DAO console (overview, treasury, governance, history, proposals; standalone SPA + `DaoView` library)
 **Project type:** Vue app + UI library
-**Template:** AUDIT_TEMPLATE.md (2026-10-08) + AUDIT_TEMPLATE_SUI_CLIENT.md (2026-10-08) + AUDIT_TEMPLATE_TS.md (2026-10-08) + AUDIT_TEMPLATE_VUE.md (2026-10-08) + AUDIT_TEMPLATE_IMG.md (2026-10-08)
+**Template:** AUDIT_TEMPLATE.md (2026-11-01) + AUDIT_TEMPLATE_SUI_CLIENT.md (2026-10-08) + AUDIT_TEMPLATE_TS.md (2026-11-01) + AUDIT_TEMPLATE_VUE.md (2026-11-01) + AUDIT_TEMPLATE_IMG.md (2026-10-08)
 **Sui SDK:** `@mysten/sui ^2.33.2` (installed 2.35.0, one copy; `npm ls` single version)   **Transport:** gRPC through wallet-adapter; optional read-indexer over HTTPS
 **Networks:** testnet (recorded deployment); any other network reports "no deployment" instead of querying
 **On-chain packages consumed:** `access_gate` (reads only) through `@meddleware/access-gate-client/deployments` (0.0.9, same records as 0.0.8: testnet `0xd7ddaa94…88c9`, PlatformConfig `0x3f81489d…e7b5`; reads use `originalId`)
