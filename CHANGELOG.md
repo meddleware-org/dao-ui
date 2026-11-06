@@ -5,6 +5,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); version
 [Semantic Versioning](https://semver.org/). Before 0.2.0, breaking changes ship as patch releases.
 Releases before 0.1.34 are recorded in the git history only.
 
+## [Unreleased]
+
+### Changed
+
+- Unit tests process the `@meddleware` packages through Vite (the shared `inlineMeddleware` from `@meddleware/frontend-config`, now a dev dependency), so a newer `@meddleware/ui` that imports CSS loads in Vitest.
+
 ## [0.1.39] - 2026-10-30
 
 - Dependency updates (minor and patch groups) and workflow action bumps. No source change.
