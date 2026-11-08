@@ -527,7 +527,7 @@ in `node-ci.yml`, which both release workflows call (F11).
 - [ ] re-enable per `post-bootstrap/_retired/README.md`, including `automountServiceAccountToken: false` (F19: the exact change is recorded there) — gated on governance being usable
 - [ ] `access_gate` mainnet deployment recorded in access-gate-client — mainnet-blocked
 - [ ] registry credential inventory and rotation (F18) — `OPERATOR_TASKS.md` "Image registry credentials"
-- [ ] external review — maintainer item (`OPERATOR_TASKS.md` "Funding, grants and an external audit")
+- [ ] external review (ADR-0009 gate G4: not a launch gate; covered by redeploy and the audit pass) — maintainer item (`OPERATOR_TASKS.md` "Funding, grants and an external audit")
 
 ## Cross-project themes
 
