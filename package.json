@@ -2,7 +2,7 @@
   "name": "@meddleware/dao-ui",
   "version": "0.1.39",
   "homepage": "https://docs.meddleware.co.uk/blockchain/sui/dao/",
-  "description": "Meddleware DAO console \u2014 treasury overview, proposals, and governance on Sui.",
+  "description": "Meddleware DAO console — treasury overview, proposals, and governance on Sui.",
   "author": "Meddleware <dev@meddleware.co.uk>",
   "license": "0BSD",
   "repository": {
@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@meddleware/eslint-config": "^0.0.4",
-    "@meddleware/frontend-config": "^0.0.13",
+    "@meddleware/frontend-config": "^0.0.14",
     "@meddleware/wallet-adapter": "^0.0.20",
     "@types/node": "~26.6.5",
     "@vitejs/plugin-vue": "^6.0.9",
