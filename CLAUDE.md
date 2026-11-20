@@ -129,3 +129,7 @@ wiring the real module in is a composable-body swap, not a UI rewrite.
   (`@meddleware/design-tokens` overrides, `AppHeader` brand slot, network badge).
 - Clarify what is fixed by the shared `access_gate` package (commission cap, gate lifecycle) vs.
   what a white-label operator controls (their treasury, commission within the cap, gate set).
+
+## Interoperability
+
+- [docs/INTEROP.md](docs/INTEROP.md): the standards this project speaks, what is planned, where to extend it, and what proves each claim.
