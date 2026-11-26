@@ -1,7 +1,8 @@
+# Installed packages and build output.
 node_modules/
 dist/
 
-# Local environment overrides (never commit)
+# Local environment overrides (never commit); the example file is kept.
 .env
 .env.*
 !.env.example

@@ -1,3 +1,5 @@
+// Tests of the Governance tab (F14): it restates a money rule and names the capability its check tests, and both must match the contract
+// (access_gate.move) and the check (ownsPlatformAdminCap looks for PlatformAdminCap only). The real client parses the config and runs the check.
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ref } from 'vue'
 import { mount, flushPromises } from '@vue/test-utils'
@@ -7,11 +9,13 @@ import { normalizeSuiAddress } from '@mysten/sui/utils'
 // match the contract (access_gate.move: pays max(price x bps / 10000, min_commission_mist), capped at 10%
 // of the price) and the check (ownsPlatformAdminCap looks for PlatformAdminCap only). The real client
 // parses the config and runs the cap check; only the wallet's client, the account and the deployment are mocked.
+// The wallet's client calls and the recorded deployment, shared with the mocks below.
 const { getObject, listOwnedObjects, deployment } = vi.hoisted(() => ({
   getObject: vi.fn(),
   listOwnedObjects: vi.fn(),
   deployment: { current: null as null | { originalId: string; publishedAt: string; platformConfigId: string } },
 }))
+// A wallet with one account the tests set, and a client that answers from the mocked calls.
 vi.mock('../src/wallet.js', async () => {
   const { shallowRef } = await import('vue')
   const account = shallowRef<null | { address: string }>(null)
@@ -20,6 +24,7 @@ vi.mock('../src/wallet.js', async () => {
     useWallet: () => ({ account }),
   }
 })
+// A config with no real chain behind it; a missing deployment throws as the real one does.
 vi.mock('../src/config.js', () => ({
   network: ref('testnet'),
   explorerNetwork: ref('testnet'),
@@ -33,12 +38,15 @@ vi.mock('../src/config.js', () => ({
 import GovernanceTab from '../src/tabs/GovernanceTab.vue'
 import { useWallet } from '../src/wallet.js'
 
+// The mocked account, which a test sets to connect a wallet.
 const { account } = useWallet()
 
+// The package, PlatformConfig, treasury and wallet addresses used below.
 const PKG = normalizeSuiAddress('0xa1')
 const CFG = normalizeSuiAddress('0xcf')
 const TREASURY = normalizeSuiAddress('0x7e')
 const WALLET = normalizeSuiAddress('0xb0')
+// A PlatformConfig object as the core API returns it.
 const configObject = {
   object: {
     objectId: CFG,
@@ -55,8 +63,10 @@ beforeEach(() => {
   getObject.mockResolvedValue(configObject)
 })
 
+// A component's text with runs of whitespace collapsed, so wrapped lines compare equal.
 const text = (w: { text(): string }) => w.text().replace(/\s+/g, ' ')
 
+// The commission paragraph and the live minimum.
 describe('GovernanceTab commission explanation', () => {
   it('states the contract rule: the percentage or the minimum, whichever is larger, capped at 10%', async () => {
     const w = mount(GovernanceTab)
@@ -75,6 +85,7 @@ describe('GovernanceTab commission explanation', () => {
   })
 })
 
+// What the tab says about the connected wallet's capability.
 describe('GovernanceTab capability check', () => {
   it('names only PlatformAdminCap, the one capability the check tests, when the wallet lacks it', async () => {
     account.value = { address: WALLET }

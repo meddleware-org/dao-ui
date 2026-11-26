@@ -9,9 +9,14 @@ Releases before 0.1.34 are recorded in the git history only.
 
 ### Changed
 
+- A failed read is shown in plain words ("This cannot be read right now. Try again later.", or "The DAO console is not available on mainnet." where no deployment is recorded). The error's own text, which can quote an address the page asked, is no longer shown; the cause goes to the console once.
 - A node that has pruned the history asked for is answered in plain words ("Older activity cannot be shown right now. Try again later.") and its answer is written to the console once. Depends on `@meddleware/access-gate-client` ^0.0.14.
 
 - Unit tests process the `@meddleware` packages through Vite (the shared `inlineMeddleware` from `@meddleware/frontend-config`, now a dev dependency), so a newer `@meddleware/ui` that imports CSS loads in Vitest.
+
+### Documentation
+
+- Documentation pass (workspace documentation standard): every file has a header and line-level comments, every declaration a doc comment; `CONTRIBUTING.md` and `AGENTS.md` are new. `.github/dependabot.yml` is now the fleet template's commented file (the same ignore rules).
 
 ## [0.1.39] - 2026-10-30
 

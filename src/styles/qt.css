@@ -12,6 +12,7 @@
 
 /* ── Shell layout ────────────────────────────────────────────────────────── */
 
+/* The console's column: fills the space it is given and uses the text colour token. */
 .dao-view {
   display: flex;
   flex-direction: column;
@@ -21,6 +22,7 @@
   color: var(--text);
 }
 
+/* The open tab's panel scrolls on its own, with padding and the page background. */
 .dao-content {
   flex: 1;
   overflow-y: auto;
@@ -30,6 +32,7 @@
 
 /* ── Amount cells (monospace, right-aligned) ─────────────────────────────── */
 
+/* An amount: mono, right-aligned and never wrapped. */
 .dao-amount {
   font-family: var(--mw-font-mono);
   font-size: 0.8rem;
@@ -37,12 +40,14 @@
   white-space: nowrap;
 }
 
+/* A muted amount, for a figure that is not the main one. */
 .dao-amount--muted {
   color: var(--muted);
 }
 
 /* ── Two-column overview layout ──────────────────────────────────────────── */
 
+/* The overview's two columns of equal width. */
 .dao-overview-cols {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -58,6 +63,7 @@
 /* ── Proposal progress bar ───────────────────────────────────────────────── */
 
 /* A native <progress>: engines paint the track/value with their own pseudo-elements. */
+/* The bar: full width, six pixels high, with the shared track colour and border. */
 .dao-progress {
   display: block;
   width: 100%;
@@ -70,21 +76,25 @@
   overflow: hidden;
 }
 
+/* WebKit and Blink paint the track with this pseudo-element. */
 .dao-progress::-webkit-progress-bar {
   background: var(--lift);
 }
 
+/* The filled part, in the accent colour, animating when the value changes. */
 .dao-progress::-webkit-progress-value {
   background: var(--accent);
   transition: width 0.3s ease;
 }
 
+/* Firefox paints the filled part with its own pseudo-element. */
 .dao-progress::-moz-progress-bar {
   background: var(--accent);
 }
 
 /* ── Info tooltip marker ─────────────────────────────────────────────────── */
 
+/* A small round question mark beside a column heading; its title carries the help text. */
 .dao-info {
   display: inline-flex;
   align-items: center;
@@ -105,6 +115,7 @@
 
 /* ── Pagination ──────────────────────────────────────────────────────────── */
 
+/* Previous, page number and next on one centred row. */
 .dao-pagination {
   display: flex;
   align-items: center;
@@ -116,45 +127,54 @@
 /* ── Layout utilities ────────────────────────────────────────────────────── */
 
 /* Vertical stack of panels within a tab. */
+/* The vertical stack of panels in a tab. */
 .dao-stack {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
+/* A tighter gap for the summary column of the overview. */
 .dao-stack--tight {
   gap: 8px;
 }
 
 /* Key/value readouts stay compact rather than spanning a wide panel. */
+/* A readout is limited in width so the label and its value stay close. */
 .dao-stat-grid {
   max-width: 480px;
 }
 
 /* ── Misc text utilities ─────────────────────────────────────────────────── */
 
+/* The mono face for addresses, digests and amounts. */
 .dao-mono {
   font-family: var(--mw-font-mono);
   font-size: 0.8rem;
 }
 
+/* A smaller mono size for long values. */
 .dao-mono--sm {
   font-size: 0.7rem;
 }
 
+/* A value that must not wrap (an address or a digest). */
 .dao-nowrap {
   white-space: nowrap;
 }
 
+/* No margin. */
 .dao-flush {
   margin: 0;
 }
 
+/* De-emphasised text from the muted token, in a small size. */
 .dao-muted {
   color: var(--muted);
   font-size: 0.78rem;
 }
 
+/* A tab's small upper-case heading. */
 .dao-section-title {
   font-size: 0.72rem;
   font-weight: 600;
@@ -164,6 +184,7 @@
   margin: 0 0 6px;
 }
 
+/* The centred message of an empty list. */
 .dao-placeholder {
   text-align: center;
   padding: 24px 16px;

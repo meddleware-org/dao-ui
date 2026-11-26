@@ -1,3 +1,5 @@
+# Continuous integration for dao-ui: dependency audit, type-check, the three linters, the unit tests, the production build and the licence
+# notices. There are no browser tests in this repository. The release workflows call this one, so a tag runs exactly the same checks.
 name: Node CI
 
 on:
@@ -8,47 +10,62 @@ on:
   # The release workflow runs the same checks on the tagged commit.
   workflow_call:
 
+# Read-only: no job here writes to the repository.
 permissions:
   contents: read
 
+# DO_NOT_TRACK asks the tools run here not to send usage data.
 env:
   DO_NOT_TRACK: "1"
 
+# One job.
 jobs:
+  # The production build and the checks that need it.
   build:
     name: Type-check and build
     runs-on: ubuntu-latest
 
     steps:
+      # Actions are pinned to a commit hash, with the version as a comment so Dependabot can update both.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      # Node 26, the fleet baseline.
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '26'
 
+      # A clean install from the lock file.
       - name: Install dependencies
         run: npm ci
 
+      # The npm advisory check, against the repository's allow-list (.github/audit-allowlist.json); it complements the Trivy scan below.
       - name: Audit dependencies
         run: node .github/audit-gate.mjs
 
+      # vue-tsc over the sources.
       - name: Type-check
         run: npm run type-check
 
+      # Stylelint over the stylesheets.
       - name: Lint CSS (stylelint)
         run: npm run lint:css
 
+      # ESLint with the accessibility and browser-compatibility rules.
       - name: Lint JS (eslint + vuejs-a11y)
         run: npm run lint:js
 
+      # html-validate over the pages.
       - name: Lint HTML (html-validate)
         run: npm run lint:html
 
+      # The component tests.
       - name: Unit tests
         run: npm test
 
+      # vite build into dist/.
       - name: Build
         run: npm run build
 
+      # The licence notices file is produced and not empty.
       - name: Third-party licence notices
         run: npm run check:licenses && test -s dist/THIRD_PARTY_LICENSES

@@ -1,18 +1,27 @@
+// TypeScript configuration for the app, self-contained (it does not extend the fleet's shared base). Strict mode, bundler module resolution and DOM types;
+// `npm run type-check` (vue-tsc) reads it, Vite does not type-check.
 {
   "compilerOptions": {
+    // Modern output: Vite and the browser list decide what is down-levelled.
     "target": "ESNext",
     "module": "ESNext",
+    // Resolve imports as a bundler does (package `exports`, extensionless paths).
     "moduleResolution": "Bundler",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    // The strict family of checks.
     "strict": true,
     "esModuleInterop": true,
+    // Skip checking the packages' declaration files.
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    // Each file must be compilable on its own, and type-only imports must say so.
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "jsx": "preserve",
     "types": ["node"],
+    // Only type-check; emit nothing.
     "noEmit": true
   },
+  // The app's own sources and its Vite configuration; the tests have their own checks.
   "include": ["src/**/*.ts", "src/**/*.vue", "src/**/*.d.ts", "vite.config.ts"]
 }

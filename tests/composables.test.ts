@@ -1,3 +1,5 @@
+// Tests of the console's composables against the real access-gate client. Only the wallet's client and the deployment record are replaced; the client parses
+// objects and decodes events itself, so a change in its wire formats shows here. Failures must read as plain words, never as the error's own text (src/availability.ts).
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { isReadonly, nextTick, ref } from 'vue'
 import { bcs } from '@mysten/sui/bcs'
@@ -18,11 +20,12 @@ vi.mock('../src/config.js', () => ({
   network: ref('testnet'),
   INDEXER_URL: '',
   requireDeployment: () => {
-    if (!deployment.current) throw new Error('no access_gate deployment recorded for mainnet')
+    if (!deployment.current) throw new NotDeployedError('mainnet')
     return deployment.current
   },
 }))
 
+import { NotDeployedError, UNREADABLE } from '../src/availability.js'
 import { useDaoEvents } from '../src/composables/useDaoEvents.js'
 import { useGates } from '../src/composables/useGates.js'
 import { usePlatformConfig } from '../src/composables/usePlatformConfig.js'
@@ -32,28 +35,36 @@ import { useProposals } from '../src/composables/useProposals.js'
 const PKG = normalizeSuiAddress('0xa1')
 const CFG = normalizeSuiAddress('0xcf')
 const TREASURY = normalizeSuiAddress('0x7e')
+// The buyer, holder and gate addresses the events and objects use.
 const BUYER = normalizeSuiAddress('0xb0')
 const HOLDER = normalizeSuiAddress('0xc0')
 const GATE = normalizeSuiAddress('0x9a')
 
+// The BCS layout of the mint event.
 const Minted = bcs.struct('AccessMintedEvent', {
   nft_id: bcs.Address, gate_id: bcs.Address, soulbound: bcs.bool(), initial_uses: bcs.u64(),
   recipient: bcs.Address, commission_mist: bcs.u64(), timestamp_ms: bcs.u64(),
 })
+// The BCS layout of the consume event.
 const Consumed = bcs.struct('AccessConsumedEvent', {
   nft_id: bcs.Address, gate_id: bcs.Address, nonce: bcs.vector(bcs.u8()), consumer: bcs.Address,
   uses_after: bcs.u64(), timestamp_ms: bcs.u64(),
 })
+// One event as the node returns it.
 const ev = (name: string, bytes: Uint8Array, checkpoint: string, pkg = PKG) => ({
   eventType: `${pkg}::access_gate::${name}`, sender: HOLDER, bcs: bytes, checkpoint, transactionDigest: `tx${checkpoint}`, eventIndex: 0,
 })
+// A mint event for the given checkpoint, decoded by the client's own parser.
 const minted = (checkpoint: string, pkg = PKG) =>
   ev('AccessMintedEvent', Minted.serialize({ nft_id: GATE, gate_id: GATE, soulbound: false, initial_uses: 1, recipient: BUYER, commission_mist: 1, timestamp_ms: 1 }).toBytes(), checkpoint, pkg)
+// A consume event for the given checkpoint.
 const consumed = (checkpoint: string) =>
   ev('AccessConsumedEvent', Consumed.serialize({ nft_id: GATE, gate_id: GATE, nonce: [...Buffer.from('nonce-123')], consumer: HOLDER, uses_after: 0, timestamp_ms: 2 }).toBytes(), checkpoint)
 
+// A PlatformConfig object as the core API returns it.
 const configObject = { object: { objectId: CFG, type: `${PKG}::access_gate::PlatformConfig`, json: { version: '1', treasury: TREASURY, commission_bps: '20', min_commission_mist: '1000000', free_gate_fee_mist: '100000000' } } }
 
+// A clean set of mocks and the recorded deployment before each test.
 beforeEach(() => {
   listEvents.mockReset()
   getObject.mockReset()
@@ -62,6 +73,7 @@ beforeEach(() => {
   deployment.current = { originalId: PKG, publishedAt: PKG, platformConfigId: CFG }
 })
 
+// The activity feed: how events are merged, paged and worded when the history is pruned or a deployment is missing.
 describe('useDaoEvents', () => {
   it('shows the consumer of a consume and the recipient of a mint, newest first', async () => {
     listEvents.mockResolvedValueOnce({ events: [consumed('9'), minted('8')], hasNextPage: false, endCursor: null })
@@ -105,11 +117,12 @@ describe('useDaoEvents', () => {
     deployment.current = null
     const { error, reload } = useDaoEvents()
     await reload()
-    expect(error.value).toMatch(/no access_gate deployment/)
+    expect(error.value).toBe('The DAO console is not available on mainnet.')
     expect(listEvents).not.toHaveBeenCalled()
   })
 })
 
+// The platform settings read from the recorded PlatformConfig object.
 describe('usePlatformConfig', () => {
   it('reads treasury and commission from the recorded PlatformConfig', async () => {
     getObject.mockResolvedValueOnce(configObject)
@@ -124,7 +137,7 @@ describe('usePlatformConfig', () => {
     const { config, error, reload } = usePlatformConfig()
     await reload()
     expect(config.value).toBeNull()
-    expect(error.value).toMatch(/not an access_gate PlatformConfig/)
+    expect(error.value).toBe(UNREADABLE)
   })
 })
 
@@ -146,6 +159,7 @@ const gateJson = (over: Record<string, unknown>) => ({
   ...over,
 })
 
+// The gates the treasury administers, found through its AdminCaps.
 describe('useGates', () => {
   it('lists the treasury\'s gates across pages and leaves out one that cannot be read', async () => {
     const cap = (id: string, gate: string) => ({ objectId: id, type: `${PKG}::access_gate::AdminCap`, json: { gate_id: gate } })
@@ -166,6 +180,7 @@ describe('useGates', () => {
   })
 })
 
+// The proposals stub: an empty, read-only list until the vault_dao module ships.
 describe('useProposals — empty + readonly stub', () => {
   it('exposes an empty, readonly list until vault_dao ships', () => {
     const { proposals, loading } = useProposals()
@@ -176,6 +191,7 @@ describe('useProposals — empty + readonly stub', () => {
   })
 })
 
+// The treasury balance, which follows the address as it becomes known.
 describe('useTreasury', () => {
   const flush = () => new Promise((r) => setTimeout(r, 0))
   const bal = (total: string, coins: string) => ({ balance: { coinType: '0x2::sui::SUI', balance: total, coinBalance: coins, addressBalance: String(BigInt(total) - BigInt(coins)) } })
@@ -216,6 +232,6 @@ describe('useTreasury', () => {
     await nextTick()
     await flush()
     expect(balance.value).toBeNull()
-    expect(error.value).toBe('unavailable')
+    expect(error.value).toBe(UNREADABLE)
   })
 })

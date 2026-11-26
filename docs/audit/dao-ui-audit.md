@@ -22,7 +22,7 @@
 **Review date:** 2026-09-18 (first pass) · re-verified 2026-10-03 · re-verified 2026-10-09 · fixes 2026-10-18 (0.1.34, published, not deployed); 0.1.38 released 2026-10-30 (developer-docs and indexer links on the machine zone, ADR-0005; current @meddleware packages) and 0.1.39 released 2026-10-30 (dependency and workflow-action bumps) — both reviewed in the delta entry of 2026-11-05; delta review 2026-11-05 (retired status confirmed)
 **Reviewer:** Internal review
 **Severity ceiling:** Low — read-only: nothing is signed; a wallet is used only to detect a `PlatformAdminCap`.
-**Status:** re-verified 2026-10-09; F11–F14, F16 and F20 fixed in 0.1.34 (2026-10-18, commit `7857e2e`); 0.1.34 published (npm and image, signature verified) 2026-10-18 and not deployed (retired)
+**Status:** Part B documentation pass 2026-11-26 (F21, F22 and F23 RESOLVED, unreleased); re-verified 2026-10-09; F11–F14, F16 and F20 fixed in 0.1.34 (2026-10-18, commit `7857e2e`); 0.1.34 published (npm and image, signature verified) 2026-10-18 and not deployed (retired)
 
 ---
 
@@ -349,6 +349,48 @@ sources read is defined by design-tokens or by the file itself).
 **Remediation / evidence:** `var(--mw-font-mono)` (as `qt.css` and `ProposalRow` use); the test passes
 for every `.vue` and `.css` file under `src/`.
 
+### F21 — Drift: no `CONTRIBUTING.md`, most declarations, workflows and files undocumented
+**Severity:** Low   **Disposition:** RESOLVED (2026-11-26, unreleased)
+**Where:** the repository had no `CONTRIBUTING.md`, and most files (the configurations, the workflows, the scripts, the components' templates and styles, the tests and the e2e helpers) had no header or line-level comments.
+**Remediation / evidence:** `CONTRIBUTING.md` is written; every file carries a header and line-level comments and every declaration a doc comment (`node scripts/check-docs.mjs --report dao-ui` in the workspace: all 49 measured files meet the standard). The files synced from `@meddleware/frontend-config` (dependabot, postcss, stylelint, the allow-list) were refreshed from its commented templates with `npx mw-sync --write`; they match the published package only after that package's next release (Phase 5). The built bundle is unchanged: every built file is identical to the previous commit's once the scoped-style and chunk hashes are normalised.
+
+### F22 — A failed read showed the error's own text, which can quote an address the page asked
+**Severity:** Low   **Disposition:** RESOLVED (2026-11-26, unreleased)
+**Where:** `src/composables/useDaoEvents.ts`, `useGates.ts`, `usePlatformConfig.ts` and `useTreasury.ts` (`error.value = e.message`), shown by `TreasuryTab.vue` and `HistoryTab.vue`.
+**Issue:** A chain client's error can name the endpoint it called, so the page could print a configured node or indexer address to the visitor, and the message was developer text a person cannot act on (the workspace's CONF rule, D146: a message never repeats a configured address). A missing deployment read "no access_gate deployment recorded for mainnet".
+**Impact:** A visitor could be shown an address from the configuration, and a first-time reader a message about `access_gate`.
+**Remediation / evidence:** New `src/availability.ts` (`NotDeployedError`, `plainFailure`): every composable now shows "This cannot be read right now. Try again later." or "The DAO console is not available on <network>.", and the cause is written to the console once. `tests/availability.test.ts` proves an error that quotes an address is not repeated and the cause is logged once; `tests/composables.test.ts` asserts the plain words. The pruned-history sentence is unchanged.
+
+### F23 — The console's words do not follow the reader standard
+**Severity:** Low   **Disposition:** DEFERRED as FU-0207
+**Where:** The tabs' templates (`GovernanceTab.vue`, `HistoryTab.vue`, `OverviewTab.vue`, `ProposalRow.vue`).
+**Issue:** Shorthand and chain vocabulary ("ckpt", "bps", "Block", `PlatformAdminCap`) and "launching soon" in the proposal row; there is no wording test.
+**Impact:** A first-time reader would not follow it; nobody reads it today because the console is retired from the dashboard.
+**Remediation / evidence:** FU-0207: port `treasury-ui`'s wording test and plain words when the dashboard route returns.
+
+## Part B documentation pass (2026-11-26)
+
+Scope: every tracked file of the repository (57 files, 49 measured by the documentation standard's file measure, 6 excluded: the lockfile, `LICENSE`, the generated `docs/INTEROP.md`, the two published legal pages and the Kopimi PDF) read against the workspace's `docs/operations/DOCUMENTATION_STANDARD.md` and annotated (Part B Phase 1, the thirty-ninth, the eighth frontend app repository repository); the DOCS, RFC, IOP, PRIV and CONF lenses applied for the first time.
+After: `npm run type-check`, `npm run lint`, `npm test` (43 passed, 5 files) and `npm run build`; `npm run check:licenses`. The documentation change is comment-only apart from what the findings above record: every built file is identical to the previous commit's once the scoped-style and chunk hashes are normalised.
+**Not run here:** `npm ci` and the image build (the lock file asks for `@meddleware/access-gate-client` 0.0.14, which is published in Phase 5, so the checks ran against the installed packages; the image needs Docker); this repository has no browser tests.
+
+**Front matter (DOCS, RFC, IOP, PRIV and CONF lenses, added 2026-11-26):**
+
+| Field | Value |
+| --- | --- |
+| Documentation status | ledger (workspace `docs/audit/DOCS_LEDGER.tsv`): 57 tracked files, 49 measured and meeting the standard, 6 excluded (the lockfile, `LICENSE`, the generated `docs/INTEROP.md`, the two published legal pages and the Kopimi PDF), the rest data |
+| Required documents | README, CHANGELOG, SECURITY, CONTRIBUTING (added 2026-11-26), LICENSE (0BSD), CLAUDE.md, AGENTS.md: all present |
+| Doc lints | `check-docs.mjs` (workspace) is the gate. The shared `eslint-plugin-jsdoc` fragment is switched on here after the Phase 5 release of `@meddleware/frontend-config` |
+| Standards spoken | Not served; the legal pages in public/legal are the only public files (the list is `docs/INTEROP.md`, generated from the platform's interoperability map) |
+| Deviations | none |
+| Drafts relied on | none |
+| Personal data | none held by this repository; the colour mode is the shared package's and is stored only after the visitor ticks "Remember on this device". A wallet connection is optional and is held by the shared wallet singleton (`@meddleware/wallet-adapter`); this app stores nothing of it. Nothing is stored before the visitor acts |
+| Requests to other hosts | its own origin (and `/runtime-config.json`); the Sui full node of the chosen network (read-only: the treasury balance, the platform settings, the gates and the events); the read indexer when one is configured (display data only; the page falls back to the node); the Governance tab asks the node whether a connected wallet holds the PlatformAdminCap. The explorer links are links a person follows, not requests the page makes |
+| Dependencies and exit | the Sui full nodes, the optional read indexer, the wallet (Wallet Standard, through `@meddleware/wallet-adapter`), `@meddleware/access-gate-client`, `@meddleware/ui` and the design tokens; the static-server image; Cloudflare; quay.io, Docker Hub and the self-hosted registry; GitHub Actions, npm, Sigstore, Trivy and Dependabot |
+| Configuration | `VITE_NETWORK`, the optional `VITE_INDEXER_URL` (a machine-zone endpoint that `/runtime-config.json` may override) and the two documentation links, documented in `.env.example`; none is a secret. A failed read is told to a person in plain words and never repeats the error's text (F22); the cause goes to the console once |
+
+**B.RFC-3 Deviations:** none. **B.IOP:** the page is a static bundle that any static host can serve with the documented headers, and it holds no data a person could need to take away; the interfaces it consumes are the platform's published ones (`docs/INTEROP.md`). There is no written deprecation policy beyond the platform's rule that releases before mainnet are patch bumps with the changelog naming what broke.
+
 ## Section A — Invariant verification matrix
 
 | # | Invariant | Enforced at | Proven by | Status |
@@ -624,3 +666,4 @@ in `node-ci.yml`, which both release workflows call (F11).
 - 2026-10-22 (audit close-out) — release 0.1.36 (`v0.1.36` = `04c08b8`; `Publish (Docker)` and `Publish (npm)` succeeded). Image base: static-server 0.1.11 (Go 1.26.10 standard library, CVE-2026-111943, so the scan-before-sign gate passes; static-server F13). 0.1.35 (`05d29ea`) took `@meddleware/access-gate-client` `^0.0.10` (a stale indexer head page, `polledAt` older than 60 s, now falls back to the node; sui-indexer F19). No disposition change. Not re-run in this pass: the unit tests, the build and the audit gate (the tag's own CI and publish runs succeeded).
 - 2026-10-24 — machine-zone readiness (workspace ADR-0005, C1z): endpoints read through `@meddleware/ui` `withRuntimeEnv`, loaded from a same-origin `/runtime-config.json` (strict key allowlist, https-only, no credentials/query/fragment; a missing, non-JSON or invalid file keeps the build values) before the app modules load; own `robots.txt` and `llms.txt`. Verified: one build served by static-server 0.1.11 with and without the file calls the configured indexer / falls back, 0 CSP violations, 0 page errors (headless Chromium).
 - 2026-11-05 — delta review of 0.1.35–0.1.39 and confirmation of the retired status. **Status confirmed:** the feature is parked at `post-bootstrap/_retired/dao-ui` (not discovered by `apply.sh`, absent from `config/images.yaml`, listed in `post-bootstrap/_retired/README.md` as retired 2026-09-28), the dashboard has no route for it (`dashboard-ui/src/router/index.ts`), and `https://sui-dao.meddleware.co.uk/` does not answer (a connection attempt returned no HTTP status, 2026-11-05). The published package is `@meddleware/dao-ui` 0.1.39 (npm, 2026-11-05). **Reviewed:** `git diff v0.1.34..HEAD` — source changes are `src/config.ts` (the developer-docs link on `meddleware.dev`; the indexer URL read through `withRuntimeEnv`, so a same-origin `/runtime-config.json` can override it — the strict key allowlist and https-only rule live in `@meddleware/ui`), `src/main.ts` (the app mounts after `loadRuntimeConfig()` resolves; the endpoint is read after the load, not before) and one line in `App.vue`; the rest is manifests, workflows and the stale allowlist entry (`braces`, GHSA-vfj7-8cjw-p6xm) removed on 2026-10-24 — the allowlist file is now `[]`. Ran: `npm ci`, the audit gate (0 high/critical, 0 not allowlisted), `npm run type-check`, `lint`, `npx vitest run` (4 files, 38 tests) and `npm run build` — all pass; the five-browser e2e sweep was **not** run (the app is not served; if it is re-enabled it adopts the shared `defineA11ySuite` first). Reworded the two release-tool marks in the front matter. No finding changed and none was added. Lens check: A11Y — recorded **○ (not applicable while retired)**: nothing renders for people from this repository; the TS and VUE rows are re-cited to the 2026-11-01 registry (the TS first-party shared-tooling row does not apply: no shared tooling is consumed beyond `@meddleware/ui` and design-tokens, which the ui and tokens audits cover; the VUE test-hooks row has no test mode here).
+- 2026-11-26 — Part B documentation pass: read every tracked file against the documentation standard and annotated it (49 measured files meet it); recorded F21 (documentation drift, RESOLVED); F22 (a failed read echoed the error text) RESOLVED, F23 (wording) deferred as FU-0207; applied the RFC, IOP, PRIV and CONF lenses for the first time (front matter in the Part B section); `npm run type-check`, `npm run lint`, `npm test` (43 passed, 5 files) and `npm run build`; `npm run check:licenses`; the built bundle is unchanged.
