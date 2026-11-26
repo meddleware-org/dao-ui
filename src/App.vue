@@ -17,7 +17,6 @@ const DEV_URL  = import.meta.env.VITE_DEV_URL  || 'https://meddleware.dev/sui/ac
 </script>
 
 <template>
-  <!-- The page: header, console, footer in a column. -->
   <div class="app">
     <!-- A dark header, to match the console's desktop-application look. -->
     <AppHeader variant="dark">

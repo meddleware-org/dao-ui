@@ -55,7 +55,6 @@ const accessesConsumed = computed(() => events.value.filter((e) => e.type === 'A
 </script>
 
 <template>
-  <!-- Two columns: the treasury summary, then the recent activity. -->
   <div class="dao-overview-cols">
     <!-- Left: treasury summary -->
     <!-- The left column's two panels. -->

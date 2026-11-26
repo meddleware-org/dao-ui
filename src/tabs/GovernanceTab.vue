@@ -88,7 +88,6 @@ watch(
 </script>
 
 <template>
-  <!-- Two panels stacked: the platform's parameters, then the admin actions. -->
   <div class="dao-stack gov">
     <!-- The commission rules the contract enforces. -->
     <UiPanel title="Platform Parameters">

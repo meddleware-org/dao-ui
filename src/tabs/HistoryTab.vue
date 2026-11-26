@@ -54,7 +54,6 @@ function badgeVariant(type: DaoEvent['type']): 'active' | 'closed' {
 </script>
 
 <template>
-  <!-- The heading and the refresh button on one row. -->
   <header class="history__head">
     <!-- The tab's heading. -->
     <h2 class="dao-section-title">On-Chain Events</h2>

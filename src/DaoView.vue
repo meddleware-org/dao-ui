@@ -52,7 +52,6 @@ const { epoch } = useEpoch()
 </script>
 
 <template>
-  <!-- The console: toolbar, tabs, the open tab's panel and the status bar in a column. -->
   <div class="dao-view">
     <!-- The toolbar's one action returns to the overview. -->
     <UiToolbar :actions="[{ id: 'home', label: '🏛 Meddleware DAO' }]" @action="activeTab = 'overview'" />

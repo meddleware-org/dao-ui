@@ -45,7 +45,6 @@ function formatPrice(mist: bigint): string {
 </script>
 
 <template>
-  <!-- Two panels stacked: the treasury, then its gates. -->
   <div class="dao-stack">
     <!-- The commission, balance and address. -->
     <UiPanel title="Treasury">

@@ -22,7 +22,6 @@ function format(mist: bigint, symbol: string): string {
 </script>
 
 <template>
-  <!-- The amount in the mono face, right-aligned (qt.css). -->
   <span class="dao-amount" :class="{ 'dao-amount--muted': muted }">
     <!-- A known amount. -->
     <template v-if="mist !== null">{{ format(mist, symbol ?? 'SUI') }}</template>

@@ -15,7 +15,6 @@ const { epoch } = useEpoch()
 </script>
 
 <template>
-  <!-- With proposals: a heading and the list. -->
   <template v-if="proposals.length > 0">
     <!-- The tab's heading. -->
     <h2 class="dao-section-title">Active &amp; Pending Proposals</h2>

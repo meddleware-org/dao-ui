@@ -43,7 +43,6 @@ function formatSui(mist: bigint): string {
 </script>
 
 <template>
-  <!-- One proposal in its own panel. -->
   <UiPanel class="proposal">
     <!-- Status, title and time left on one row. -->
     <header class="proposal__head">
