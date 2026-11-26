@@ -90,6 +90,17 @@ describe('useDaoEvents', () => {
     expect(events.value.map((e) => e.checkpoint)).toEqual(['3', '2'])
   })
 
+  it('says in plain words that older activity cannot be shown when the node has pruned the history', async () => {
+    listEvents.mockRejectedValueOnce(new Error('requested data below earliest available; lowest available checkpoint is 99'))
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const { events, error, reload } = useDaoEvents()
+    await reload()
+    expect(error.value).toBe('Older activity cannot be shown right now. Try again later.')
+    expect(events.value).toEqual([])
+    expect(warn).toHaveBeenCalledTimes(1)
+    warn.mockRestore()
+  })
+
   it('surfaces a missing deployment as an error', async () => {
     deployment.current = null
     const { error, reload } = useDaoEvents()

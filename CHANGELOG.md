@@ -9,6 +9,8 @@ Releases before 0.1.34 are recorded in the git history only.
 
 ### Changed
 
+- A node that has pruned the history asked for is answered in plain words ("Older activity cannot be shown right now. Try again later.") and its answer is written to the console once. Depends on `@meddleware/access-gate-client` ^0.0.14.
+
 - Unit tests process the `@meddleware` packages through Vite (the shared `inlineMeddleware` from `@meddleware/frontend-config`, now a dev dependency), so a newer `@meddleware/ui` that imports CSS loads in Vitest.
 
 ## [0.1.39] - 2026-10-30

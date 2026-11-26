@@ -1,10 +1,13 @@
 // Recent access_gate mints and consumes, newest first, typed by @meddleware/access-gate-client.
 // Read from the indexer when VITE_INDEXER_URL is set (display data; falls back to the full node).
 import { ref } from 'vue'
-import { listAccessGateEvents, type EventCursor } from '@meddleware/access-gate-client'
+import { isEventHistoryPruned, listAccessGateEvents, type EventCursor } from '@meddleware/access-gate-client'
 import { getSuiClient } from '../wallet.js'
 import { INDEXER_URL, network, requireDeployment } from '../config.js'
 import { latest, onChainContext } from './chainContext.js'
+
+/** What the person reads when the network no longer keeps events this old and the index could not supply them. */
+export const HISTORY_PRUNED = 'Older activity cannot be shown right now. Try again later.'
 
 export interface DaoEvent {
   type: 'AccessMinted' | 'AccessConsumed'
@@ -55,7 +58,11 @@ export function useDaoEvents(limit = 20) {
       lastRefresh.value = new Date()
     } catch (e) {
       if (!current()) return
-      error.value = e instanceof Error ? e.message : String(e)
+      if (isEventHistoryPruned(e)) {
+        // A node that has pruned the history asked for is a known condition: the person reads plain words, the node's answer goes to the console.
+        console.warn('dao-ui: the node has pruned the event history', (e as { cause?: unknown }).cause ?? e)
+        error.value = HISTORY_PRUNED
+      } else error.value = e instanceof Error ? e.message : String(e)
     } finally {
       if (current()) loading.value = false
     }

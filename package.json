@@ -46,7 +46,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@meddleware/access-gate-client": "^0.0.13",
+    "@meddleware/access-gate-client": "^0.0.14",
     "@meddleware/design-tokens": "^0.1.11",
     "@meddleware/ui": "^0.1.35",
     "@mysten/sui": "^2.33.2",
