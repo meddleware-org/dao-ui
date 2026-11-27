@@ -7,6 +7,8 @@ Releases before 0.1.34 are recorded in the git history only.
 
 ## [Unreleased]
 
+## [0.1.40] - 2026-11-27
+
 ### Changed
 
 - A failed read is shown in plain words ("This cannot be read right now. Try again later.", or "The DAO console is not available on mainnet." where no deployment is recorded). The error's own text, which can quote an address the page asked, is no longer shown; the cause goes to the console once.
